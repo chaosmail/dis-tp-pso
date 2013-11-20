@@ -11,7 +11,7 @@ LIBRARY = -L$(WEBOTS_HOME)/lib -lController
 INCLUDE = -I$(WEBOTS_HOME)/include/controller/c/
 
 follower:	follower.c
-	$(CC) -o follower follower.c $(LIBRARY) $(INCLUDE)
+	$(CC) -o follower follower.c $(LIBRARY) $(INCLUDE) -lm
 
 clean:	
 	-rm -f *.o *~ $(NAME) follower

@@ -11,7 +11,7 @@ LIBRARY = -L$(WEBOTS_HOME)/lib -lController
 INCLUDE = -I$(WEBOTS_HOME)/include/controller/c/
 
 leader:	leader.c
-	$(CC) -o leader leader.c $(LIBRARY) $(INCLUDE)
+	$(CC) -o leader leader.c $(LIBRARY) $(INCLUDE) -lm
 
 clean:	
 	-rm -f *.o *~ $(NAME) leader
