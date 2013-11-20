@@ -71,11 +71,20 @@ While building the PSO controllers, libjpeg is missing
 ```
 /usr/bin/ld: warning: libjpeg.so.62, needed by /usr/local/webots/lib/libController.so, not found (try using -rpath or -rpath-link)
 ```
-Solution
+Solution: Install libjpeg62
 ```
 sudo apt-get install libjpeg62
 ```
 
+While running Webots 7.3.0 x64, libraw5 is missing (but libraw9 is installed)
+```
+/usr/local/webots7/webots-bin: error while loading shared libraries: libraw.so.5: cannot open shared object file: No such file or directory
+```
+Solution: Link the libraw9 lib to libraw5
+```
+cd /usr/lib
+sudo ln -s /usr/lib/libraw.so.5 /usr/lib/libraw.so.9
+```
 
 ## Useful Links
 
