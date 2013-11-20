@@ -12,5 +12,9 @@ to the real one.
 
 ## Useful Links
 
+### Software and Coding
 
-
+*[C++ Coding Standard](http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml) for useful coding conventions
+*[Git Documentation](http://git-scm.com/documentation) for source code version control
+*[Latex Help](http://en.wikibooks.org/wiki/LaTeX) for writing of scientific papers
+*[Markdown Cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) for documentation on Github
