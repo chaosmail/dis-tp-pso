@@ -83,7 +83,7 @@ While running Webots 7.3.0 x64, libraw5 is missing (but libraw9 is installed)
 Solution: Link the libraw9 lib to libraw5
 ```
 cd /usr/lib
-sudo ln -s /usr/lib/libraw.so.5 /usr/lib/libraw.so.9
+sudo ln -s /usr/lib/x86_64-linux-gnu/libraw.so.9 /usr/lib/libraw.so.5
 ```
 
 ## Useful Links
