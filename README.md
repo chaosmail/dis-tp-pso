@@ -49,6 +49,7 @@ Install Webots 6.2.4 64-bit (Linux)
 wget http://www.cyberbotics.com/archive/linux/webots-6.2.4-x86-64.tar.bz2
 tar jxf webots-6.2.4-x86-64.tar.bz2
 sudo mv webots /usr/local/webots
+sudo ln -s /usr/local/webots/webots /usr/bin/webots
 ```
 
 Clone the git repository
