@@ -38,8 +38,42 @@ to the real one.
 * noiseresistant PSO
 * PID controller
 
-## Getting started
+## Development
 
+### Getting started
+
+Request a free Webots Licence with your EPFL email adress from www.cyberbotics.com/registration/webots/trial/
+
+Install Webots 6.2.4 64-bit (Linux)
+```
+wget http://www.cyberbotics.com/archive/linux/webots-6.2.4-x86-64.tar.bz2
+tar jxf webots-6.2.4-x86-64.tar.bz2
+sudo mv webots /usr/local/webots
+```
+
+Clone the git repository
+```
+git clone https://github.com/chaosmail/dis-tp-pso.git
+```
+
+Build the controllers
+```
+cd dis-tp-pso/webots/controllers
+make
+```
+
+### Common Errors 
+
+#### Ubuntu 13.10 x64
+
+While building the PSO controllers, libjpeg is missing
+```
+/usr/bin/ld: warning: libjpeg.so.62, needed by /usr/local/webots/lib/libController.so, not found (try using -rpath or -rpath-link)
+```
+Solution
+```
+sudo apt-get install libjpeg62
+```
 
 
 ## Useful Links
