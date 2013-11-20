@@ -44,10 +44,10 @@ to the real one.
 
 Request a free Webots Licence with your EPFL email adress from www.cyberbotics.com/registration/webots/trial/
 
-Install Webots 6.4.4 64-bit (Linux)
+Install Webots 6.2.4 64-bit (Linux)
 ```
-wget http://www.cyberbotics.com/archive/linux/webots-6.4.4-x86-64.tar.bz2
-tar jxf webots-6.4.4-x86-64.tar.bz2
+wget http://www.cyberbotics.com/archive/linux/webots-6.2.4-x86-64.tar.bz2
+tar jxf webots-6.2.4-x86-64.tar.bz2
 sudo mv webots /usr/local/webots
 sudo ln -s /usr/local/webots/webots /usr/bin/webots
 ```
@@ -67,7 +67,7 @@ make
 
 #### Ubuntu 13.10 x64
 
-While building the PSO controllers, libjpeg is missing
+While building the PSO controllers with Webots 6.2.4 x64 , libjpeg is missing
 ```
 /usr/bin/ld: warning: libjpeg.so.62, needed by /usr/local/webots/lib/libController.so, not found (try using -rpath or -rpath-link)
 ```
