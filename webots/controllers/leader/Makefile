@@ -6,22 +6,32 @@
 #
 
 CC = gcc
-WEBOTS_HOME=/usr/local/webots
+
+ifndef WEBOTS_HOME
+    WEBOTS_HOME=/usr/local/webots
+endif
 
 ifeq ($(OS),Windows_NT)
+	# Windows Makefile
+	space :=
+	space +=
+    WEBOTS_HOME_PATH=$(subst $(space),\ ,$(strip $(subst \,/,$(WEBOTS_HOME))))
     WEBOTS_HOME=/usr/local/webots
 else
     UNAME_S := $(shell uname -s)
     ifeq ($(UNAME_S),Linux)
-        WEBOTS_HOME=/usr/local/webots
+    	# Linux Makefile
+
     endif
     ifeq ($(UNAME_S),Darwin)
-        WEBOTS_HOME=/usr/local/webots
+        # MacOSX Makefile
+
     endif
 endif
 
 LIBRARY = -L$(WEBOTS_HOME)/lib -lController
 INCLUDE = -I$(WEBOTS_HOME)/include/controller/c/
+
 leader:	leader.c
 	$(CC) -o leader leader.c $(LIBRARY) $(INCLUDE) -lm
 
