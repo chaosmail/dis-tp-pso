@@ -7,9 +7,21 @@
 
 CC = gcc
 WEBOTS_HOME=/usr/local/webots
+
+ifeq ($(OS),Windows_NT)
+    WEBOTS_HOME=/usr/local/webots
+else
+    UNAME_S := $(shell uname -s)
+    ifeq ($(UNAME_S),Linux)
+        WEBOTS_HOME=/usr/local/webots
+    endif
+    ifeq ($(UNAME_S),Darwin)
+        WEBOTS_HOME=/usr/local/webots
+    endif
+endif
+
 LIBRARY = -L$(WEBOTS_HOME)/lib -lController
 INCLUDE = -I$(WEBOTS_HOME)/include/controller/c/
-
 leader:	leader.c
 	$(CC) -o leader leader.c $(LIBRARY) $(INCLUDE) -lm
 
