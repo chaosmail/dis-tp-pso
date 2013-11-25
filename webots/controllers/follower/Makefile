@@ -6,6 +6,7 @@
 #
 
 CC = gcc
+RM = rm -f *.o *~ $(NAME) follower
 
 ifndef WEBOTS_HOME
     WEBOTS_HOME=/usr/local/webots
@@ -15,25 +16,26 @@ ifeq ($(OS),Windows_NT)
 	# Windows Makefile
 	space :=
 	space +=
+    WEBOTS_HOME=C:\Program Files (x86)\Webots
     WEBOTS_HOME_PATH=$(subst $(space),\ ,$(strip $(subst \,/,$(WEBOTS_HOME))))
-    WEBOTS_HOME=/usr/local/webots
+    RM = DEL /F *.o && DEL /F *.exe
 else
     UNAME_S := $(shell uname -s)
     ifeq ($(UNAME_S),Linux)
     	# Linux Makefile
-
+    	WEBOTS_HOME_PATH=/usr/local/webots    	
     endif
     ifeq ($(UNAME_S),Darwin)
         # MacOSX Makefile
-
+        WEBOTS_HOME_PATH=/usr/local/webots
     endif
 endif
 
-LIBRARY = -L$(WEBOTS_HOME)/lib -lController
-INCLUDE = -I$(WEBOTS_HOME)/include/controller/c/
+LIBRARY = -L$(WEBOTS_HOME_PATH)/lib -lController
+INCLUDE = -I$(WEBOTS_HOME_PATH)/include/controller/c/
 
 follower:	follower.c
 	$(CC) -o follower follower.c $(LIBRARY) $(INCLUDE) -lm
 
 clean:	
-	-rm -f *.o *~ $(NAME) follower
+	$(RM) 
