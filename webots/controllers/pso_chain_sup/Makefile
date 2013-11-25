@@ -23,7 +23,7 @@ else
     UNAME_S := $(shell uname -s)
     ifeq ($(UNAME_S),Linux)
     	# Linux Makefile
-    	WEBOTS_HOME_PATH=/usr/local/webots    	
+    	WEBOTS_HOME_PATH=/usr/local/webots
     endif
     ifeq ($(UNAME_S),Darwin)
         # MacOSX Makefile
