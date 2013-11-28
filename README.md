@@ -36,9 +36,29 @@ to the real one.
 
 ### Implementation Webots
 
-* setup environement and trajectory
-* implement fitness function
-* implement PSO
+#### Environement and trajectory
+
+* Implement a leader, that can go a predefined trajectorie
+* Implement a follower
+* Implement a superviser, that looks up the coordinate of the leader and each follower and sends that values to each follower (see LAB05 flock_super.c)
+
+#### Fitness function
+
+* Calculate realtive range
+* Calculate relative bearing
+* Calculate realtive orientation
+* Calculate wheel speed difference
+
+#### Follower wheel speed (see LAB05 follower3.c)
+
+* Calculate realtive range
+* Calculate relative bearing
+* Calculate realtive orientation
+* Implement simple PID controller for wheel speed
+* Calculate the new wheel speed
+
+#### PSO
+
 
 ### Optimization in Webots
 
