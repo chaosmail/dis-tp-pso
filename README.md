@@ -16,31 +16,31 @@ to the real one.
 
 * Individual Performance
 * Group Solution
-* Heterogeneous
+* Heterogeneous Approach
 
 ### Fitness Function
 
-* minimize relative heading
+* minimize relative range
 * minimize relative bearing
-* minimize relative distance
-* minimize velocity difference
+* minimize relative orientation
+* minimize velocity difference ??
 
 ## Topics and Goals
 
 ### Prequisits and Design
 
-* design PSO
+* ~~design PSO~~
 * design fitness function
-* design neural network controller (braitenberg controller)
+* ~~design neural network controller (braitenberg controller)~~
 * do nonlinear sensor calibration with epuck
 
 ### Implementation Webots
 
 #### Environement
 
-* Setup a leader
-* Setup 3 followers
-* Setup a PSO superviser
+* ~~Setup a leader~~
+* ~~Setup 3 followers~~
+* ~~Setup a PSO superviser~~
 
 #### Leader
 
@@ -51,7 +51,7 @@ to the real one.
 * read coordinates of each personal leader and follower and sends that values to each follower (see LAB05 odometry flock_super.c) @Etienne
 * send the coordinates of the personal leader in hte followers coordinate system to the follower @Etienne
 
-##### PSO
+##### pso
 
 * Send particles to robot (see LAB06 PSO pso_obs_sup.c) @Christoph
 * Receive all the fitness values (see LAB06 PSO pso_obs_sup.c) @Christoph
