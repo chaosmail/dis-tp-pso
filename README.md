@@ -48,14 +48,14 @@ to the real one.
 
 #### Superviser
 
-* read coordinates of each personal leader and follower and sends that values to each follower (see LAB05 odometry flock_super.c)
-* send the coordinates of the personal leader in hte followers coordinate system to the follower
+* read coordinates of each personal leader and follower and sends that values to each follower (see LAB05 odometry flock_super.c) @Etienne
+* send the coordinates of the personal leader in hte followers coordinate system to the follower @Etienne
 
 ##### PSO
 
-* Send particles to robot (see LAB06 PSO pso_obs_sup.c)
-* Receive all the fitness values (see LAB06 PSO pso_obs_sup.c)
-* get best local performance, best neighborhood performance (see LAB06 PSO pso_obs_sup.c)
+* Send particles to robot (see LAB06 PSO pso_obs_sup.c) @Christoph
+* Receive all the fitness values (see LAB06 PSO pso_obs_sup.c) @Christoph
+* get best local performance, best neighborhood performance (see LAB06 PSO pso_obs_sup.c) @Christoph
 
 #### Follower
 
@@ -67,16 +67,16 @@ to the real one.
 
 ##### fitness function
 
-* Calculate realtive range (see LAB05 odometry follower3.c)
-* Calculate relative bearing (see LAB05  odometry follower3.c)
-* Calculate realtive orientation (see LAB05 odometry follower3.c)
-* Calculate wheel speed difference
+* Calculate realtive range (see LAB05 odometry follower3.c) @Etienne
+* Calculate relative bearing (see LAB05  odometry follower3.c) @Etienne
+* Calculate realtive orientation (see LAB05 odometry follower3.c) @Etienne
+* Calculate wheel speed difference ??
 * Move robot (see LAB06 PSO obs_con.c)
 * Calculate the fitness (see LAB06 PSO obs_con.c)
 
-##### wheel speed
+##### wheel speed 
 
-* Implement Braitenberg controller (see LAB01)
+* Implement Braitenberg controller (see LAB01) @Alice
 
 ### Optimization in Webots
 
