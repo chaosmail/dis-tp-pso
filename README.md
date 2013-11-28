@@ -38,24 +38,26 @@ to the real one.
 
 #### Environement and trajectory
 
-* Implement a leader, that can go a predefined trajectorie
-* Implement a follower
-* Implement a superviser, that looks up the coordinate of the leader and each follower and sends that values to each follower (see LAB05 flock_super.c)
+* Setup a leader
+* Setup 3 followers
+* Setup a superviser
+* Implement Leader can follow a predefined trajectory
 
-#### Fitness function
+#### Superviser
 
-* Calculate realtive range
-* Calculate relative bearing
-* Calculate realtive orientation
+* read coordinates of each personal leader and follower and sends that values to each follower (see LAB05 odometry flock_super.c)
+* send the coordinates of the personal leader in hte followers coordinate system to the follower
+
+#### Follower fitness function
+
+* Calculate realtive range (see LAB05 odometry follower3.c)
+* Calculate relative bearing (see LAB05  odometry follower3.c)
+* Calculate realtive orientation (see LAB05 odometry follower3.c)
 * Calculate wheel speed difference
 
-#### Follower wheel speed (see LAB05 follower3.c)
+#### Follower wheel speed
 
-* Calculate realtive range
-* Calculate relative bearing
-* Calculate realtive orientation
-* Implement simple PID controller for wheel speed
-* Calculate the new wheel speed
+* Implement Braitenberg controller
 
 #### PSO
 
