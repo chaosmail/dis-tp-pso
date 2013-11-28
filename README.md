@@ -40,7 +40,7 @@ to the real one.
 
 * Setup a leader
 * Setup 3 followers
-* Setup a superviser
+* Setup a PSO superviser
 * Implement Leader can follow a predefined trajectory
 
 #### Superviser
@@ -54,12 +54,16 @@ to the real one.
 * Calculate relative bearing (see LAB05  odometry follower3.c)
 * Calculate realtive orientation (see LAB05 odometry follower3.c)
 * Calculate wheel speed difference
+* Calculate the fitness function (see LAB06 PSO obs_con.c)
 
 #### Follower wheel speed
 
 * Implement Braitenberg controller
 
 #### PSO
+
+* get the overall fitness, local performance, neighborhood performance (see LAB06 PSO pso_obs_sup.c)
+* Send particles to robot (see LAB06 PSO pso_obs_sup.c)
 
 
 ### Optimization in Webots
