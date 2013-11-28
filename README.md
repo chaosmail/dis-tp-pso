@@ -36,19 +36,30 @@ to the real one.
 
 ### Implementation Webots
 
-#### Environement and trajectory
+#### Environement
 
 * Setup a leader
 * Setup 3 followers
 * Setup a PSO superviser
-* Implement Leader can follow a predefined trajectory
+
+#### Leader
+
+* follow a predefined trajectory
 
 #### Superviser
 
 * read coordinates of each personal leader and follower and sends that values to each follower (see LAB05 odometry flock_super.c)
 * send the coordinates of the personal leader in hte followers coordinate system to the follower
 
-#### Follower fitness function
+#### Follower
+
+##### main function
+
+* get data for braitenberg controller (see LAB06 PSO pso_obs.c)
+* move (see LAB06 PSO pso_obs.c)
+* calc fitness and send back to superviser (see LAB06 PSO pso_obs.c)
+
+##### fitness function
 
 * Calculate realtive range (see LAB05 odometry follower3.c)
 * Calculate relative bearing (see LAB05  odometry follower3.c)
@@ -56,15 +67,15 @@ to the real one.
 * Calculate wheel speed difference
 * Calculate the fitness function (see LAB06 PSO obs_con.c)
 
-#### Follower wheel speed
+##### wheel speed
 
 * Implement Braitenberg controller
 
 #### PSO
 
-* get the overall fitness, local performance, neighborhood performance (see LAB06 PSO pso_obs_sup.c)
 * Send particles to robot (see LAB06 PSO pso_obs_sup.c)
-
+* Receive all the fitness values (see LAB06 PSO pso_obs_sup.c)
+* get best local performance, best neighborhood performance (see LAB06 PSO pso_obs_sup.c)
 
 ### Optimization in Webots
 
