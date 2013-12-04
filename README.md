@@ -16,29 +16,67 @@ to the real one.
 
 * Individual Performance
 * Group Solution
-* Heterogeneous
+* Heterogeneous Approach
 
 ### Fitness Function
 
-* minimize relative heading
+* minimize relative range
 * minimize relative bearing
-* minimize relative distance
-* minimize velocity difference
+* minimize relative orientation
+* minimize velocity difference ??
 
 ## Topics and Goals
 
 ### Prequisits and Design
 
-* design PSO
+* ~~design PSO~~
 * design fitness function
-* design neural network controller (braitenberg controller)
+* ~~design neural network controller (braitenberg controller)~~
 * do nonlinear sensor calibration with epuck
 
 ### Implementation Webots
 
-* setup environement and trajectory
-* implement fitness function
-* implement PSO
+#### Environement
+
+* ~~Setup a leader~~
+* ~~Setup 3 followers~~
+* ~~Setup a PSO superviser~~
+
+#### Leader
+
+* follow a predefined trajectory
+
+#### Superviser
+
+* read coordinates of each personal leader and follower and sends that values to each follower (see LAB05 odometry flock_super.c) @Etienne
+* send the coordinates of the personal leader in hte followers coordinate system to the follower @Etienne
+
+##### pso
+
+* Send particles to robot (see LAB06 PSO pso_obs_sup.c) @Christoph
+* Receive all the fitness values (see LAB06 PSO pso_obs_sup.c) @Christoph
+* get best local performance, best neighborhood performance (see LAB06 PSO pso_obs_sup.c) @Christoph
+
+#### Follower
+
+##### main function
+
+* get data for braitenberg controller (see LAB06 PSO pso_obs.c)
+* move (see LAB06 PSO pso_obs.c)
+* calc fitness and send back to superviser (see LAB06 PSO pso_obs.c)
+
+##### fitness function
+
+* Calculate realtive range (see LAB05 odometry follower3.c) @Etienne
+* Calculate relative bearing (see LAB05  odometry follower3.c) @Etienne
+* Calculate realtive orientation (see LAB05 odometry follower3.c) @Etienne
+* Calculate wheel speed difference ??
+* Move robot (see LAB06 PSO obs_con.c)
+* Calculate the fitness (see LAB06 PSO obs_con.c)
+
+##### wheel speed 
+
+* Implement Braitenberg controller (see LAB01) @Alice
 
 ### Optimization in Webots
 
