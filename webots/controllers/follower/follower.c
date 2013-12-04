@@ -20,7 +20,8 @@
 
 WbDeviceTag ds[NB_SENSOR];
 WbDeviceTag emitter;
-WbDeviceTag rec;
+WbDeviceTag rec;                      // Handle for the receiver of particles
+WbDeviceTag receiver_rb;              // Handle for the receiver of range and bearing information
 double good_w[DATASIZE] = {-11.15, -16.93, -8.20, -18.11, -17.99, 8.55, -8.89, 3.52, 29.74,
 			     -7.48, 5.61, 11.16, -9.54, 4.58, 1.41, 2.09, 26.50, 23.11,
 			     -3.44, -3.78, 23.20, 8.41};
@@ -39,6 +40,7 @@ void reset(void) {
     }
     emitter = wb_robot_get_device("emitter");
     rec = wb_robot_get_device("receiver");
+    receiver_rb = wb_robot_get_device("receiver_rb");
 }
 
 double fitfunc(double[],int);
@@ -55,6 +57,7 @@ int main() {
         distance_sensor_enable(ds[i],64);
     }
     receiver_enable(rec,32);
+    wb_receiver_enable(receiver_rb,32); 
     differential_wheels_enable_encoders(64);
     braiten = 0; // Don't run forever
     robot_step(64);
@@ -64,6 +67,7 @@ int main() {
             robot_step(64);
         }
         rbuffer = (double *)wb_receiver_get_data(rec);
+        wb_receiver_next_packet(rec);
        
         // Check for pre-programmed avoidance behavior
         if (rbuffer[DATASIZE] == -1.0) {
@@ -72,14 +76,13 @@ int main() {
             
             // Otherwise, run provided controller
         } else {
-            fit = fitfunc(rbuffer,rbuffer[DATASIZE]);
+            fit = fitfunc(rbuffer,rbuffer[DATASIZE]); //evaluates fitness of the received particle
             buffer[0] = fit;
-            wb_emitter_send(emitter,(void *)buffer,sizeof(double));
+            wb_emitter_send(emitter,(void *)buffer,sizeof(double)); //sends the fitness back to the controller.
             
         }
 
-        wb_receiver_next_packet(rec);
-        
+                
     }
         
     return 0;
@@ -122,20 +125,30 @@ double fitfunc(double weights[DATASIZE],int its) {
     double ds_value[NB_SENSOR];
     int i,j;
 
+
     // Fitness variables
-    double fit_speed;           // Speed aspect of fitness
+    /*double fit_speed;           // Speed aspect of fitness
     double fit_diff;            // Speed difference between wheels aspect of fitness
-    double fit_sens;            // Proximity sensing aspect of fitness
+    double fit_sens;            // Proximity sensing aspect of fitness*/
+    double fit_range;           //range aspect of fitness
+    double fit_bearing;          //bearing aspect of fitness
+    double fit_relative_heading; //relative heading aspect of fitness
+    double new_leader_range, new_leader_bearing, new_relative_heading; // received leader range and bearing and relative heading
+    float *rbbuffer;                  // buffer for the range and bearin
     double sens_val[NB_SENSOR]; // Average values for each proximity sensor
     double fitness;             // Fitness of controller
 
     // Initially no fitness measurements
-    fit_speed = 0.0;
-    fit_diff = 0.0;
+    /*fit_speed = 0.0;
+    fit_diff = 0.0;*/
+    fit_range=0.0;
+    fit_bearing=0.0;
+    fit_relative_heading=0.0;
+
     for (i=0;i<NB_SENSOR;i++) {
         sens_val[i] = 0.0;
     }
-    fit_sens = 0.0;
+    //fit_sens = 0.0;
     old_left = 0.0;
     old_right = 0.0;
 
@@ -200,28 +213,48 @@ double fitfunc(double weights[DATASIZE],int its) {
 
         // Get current fitness value
 
-        // Average speed
+        /*// Average speed
         fit_speed += (fabs(left_speed) + fabs(right_speed))/(2.0*MAX_SPEED);
         // Difference in speed
-        fit_diff += fabs(left_speed - right_speed)/MAX_DIFF;
+        fit_diff += fabs(left_speed - right_speed)/MAX_DIFF; 
         // Sensor values
         for (i=0;i<NB_SENSOR;i++) {
-            sens_val[i] += ds_value[i]/MAX_SENS;
+            sens_val[i] += ds_value[i]/MAX_SENS;*/
+
+        /* Receive leader range, bearing and relative heading of leader */
+        if (wb_receiver_get_queue_length(receiver_rb) > 0) {
+          rbbuffer = (float*) wb_receiver_get_data(receiver_rb);
+          new_leader_range = sqrt(rbbuffer[0]*rbbuffer[0] + rbbuffer[1]*rbbuffer[1]);
+          new_leader_bearing = -atan2(rbbuffer[0],rbbuffer[1]);
+          new_relative_heading = rbbuffer[2];
+
+          wb_receiver_next_packet(receiver_rb);
         }
+
+          fit_range+=new_leader_range;
+          fit_bearing+=new_leader_bearing;
+          fit_relative_heading+=new_relative_heading;
+
+
     }
 
-    // Find most active sensor
+    /*// Find most active sensor
     for (i=0;i<NB_SENSOR;i++) {
         if (sens_val[i] > fit_sens) fit_sens = sens_val[i];
-    }
+    }*/
     // Average values over all steps
-    fit_speed /= its;
+    /*fit_speed /= its;
     fit_diff /= its;
-    fit_sens /= its;
+    fit_sens /= its;*/
+    fit_range /= its;
+    fit_bearing /= its;
+    fit_relative_heading /= its;
 
     // Better fitness should be higher
-    fitness = fit_speed*(1.0 - sqrt(fit_diff))*(1.0 - fit_sens);
-
+    int A=1; //importance coefficient of range
+    int B=1; //importance coefficient of bearing
+    int C=1; //importance coefficient of relative heading
+    fitness = 1/(A*fit_range+B*fit_bearing+C*fit_relative_heading);
     return fitness;
 }
 
