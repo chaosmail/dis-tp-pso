@@ -19,3 +19,9 @@
 *.out
 *.app
 *.hex
+
+# Labs
+lab06/
+lab05-solution/
+
+*.project
