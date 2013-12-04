@@ -105,6 +105,7 @@ int main() {
   wb_robot_init();
   printf("Particle Swarm Optimization Super Controller\n");
   reset();
+
   for (i=0;i<MAX_ROB;i++)
     wb_receiver_enable(rec[i],32);
 
@@ -203,6 +204,8 @@ void calc_fitness(double weights[ROBOTS][DATASIZE], double fit[ROBOTS], int its,
 	double *rbuffer; //to get fitness from robots
   double global_x,global_z,rel_x,rel_z; //for localisation
 	int i,j,k;
+  int cnt = 0;
+  int send_interval = 10;
 
 	for(k=0;k<ROBOTS;k++){ // assume robot 0 is leader and the followers are 1,2,3 in order
     
@@ -221,40 +224,46 @@ void calc_fitness(double weights[ROBOTS][DATASIZE], double fit[ROBOTS], int its,
     
 		// Wait for response */
 		while (wb_receiver_get_queue_length(rec[0]) == 0){
+
 		  for (i=1;i<ROBOTS;i++) {
-      /* Get position of leader and follower */
-      loc[i-1][0] = wb_supervisor_field_get_sf_vec3f(robs_translation[0])[0];
-      loc[i-1][1] = wb_supervisor_field_get_sf_vec3f(robs_translation[0])[1];
-      loc[i-1][2] = wb_supervisor_field_get_sf_vec3f(robs_translation[0])[2];
-      loc[i-1][3] = wb_supervisor_field_get_sf_rotation(robs_rotation[0])[3];
-      loc[i][0] = wb_supervisor_field_get_sf_vec3f(robs_translation[i])[0];
-      loc[i][1] = wb_supervisor_field_get_sf_vec3f(robs_translation[i])[1];
-      loc[i][2] = wb_supervisor_field_get_sf_vec3f(robs_translation[i])[2];
-      loc[i][3] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3];
+      
+        /* Get position of leader and follower */
+        loc[i-1][0] = wb_supervisor_field_get_sf_vec3f(robs_translation[0])[0];
+        loc[i-1][1] = wb_supervisor_field_get_sf_vec3f(robs_translation[0])[1];
+        loc[i-1][2] = wb_supervisor_field_get_sf_vec3f(robs_translation[0])[2];
+        loc[i-1][3] = wb_supervisor_field_get_sf_rotation(robs_rotation[0])[3];
+        loc[i][0] = wb_supervisor_field_get_sf_vec3f(robs_translation[i])[0];
+        loc[i][1] = wb_supervisor_field_get_sf_vec3f(robs_translation[i])[1];
+        loc[i][2] = wb_supervisor_field_get_sf_vec3f(robs_translation[i])[2];
+        loc[i][3] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3];
 
-      /* Find global relative coordinates */
-      global_x = loc[i][0] - loc[i-1][0];
-      global_z = loc[i][2] - loc[i-1][2];
-      /* Calculate relative coordinates */
-      rel_x = -global_x*cos(loc[i][3]) + global_z*sin(loc[i][3]);
-      rel_z = global_x*sin(loc[i][3]) + global_z*cos(loc[i][3]);
-      buffer_loc[0] = rel_x; // distance in direction of the heading of the robot
-      buffer_loc[1] = rel_z;// distance perpendicular to heading
-      buffer_loc[2] = loc[0][3] - loc[i][3]; // relative heading
-      while (buffer_loc[2] > M_PI) buffer_loc[2] -= 2.0*M_PI;
-      while (buffer_loc[2] < -M_PI) buffer_loc[2] += 2.0*M_PI;
-      //if (cnt % send_interval == 0) // Do we need a sending interval??
-        wb_emitter_send(emitter[i],(char *)buffer_loc,3*sizeof(float));
+        /* Find global relative coordinates */
+        global_x = loc[i][0] - loc[i-1][0];
+        global_z = loc[i][2] - loc[i-1][2];
+        /* Calculate relative coordinates */
+        rel_x = -global_x*cos(loc[i][3]) + global_z*sin(loc[i][3]);
+        rel_z = global_x*sin(loc[i][3]) + global_z*cos(loc[i][3]);
+        buffer_loc[0] = rel_x; // distance in direction of the heading of the robot
+        buffer_loc[1] = rel_z;// distance perpendicular to heading
+        buffer_loc[2] = loc[0][3] - loc[i][3]; // relative heading
+        while (buffer_loc[2] > M_PI) buffer_loc[2] -= 2.0*M_PI;
+        while (buffer_loc[2] < -M_PI) buffer_loc[2] += 2.0*M_PI;
+        
+        if (cnt%send_interval == 0) {
+          wb_emitter_send(emitter[i],(char *)buffer_loc,3*sizeof(float));
+          cnt = 0;
+        }
 
-      //wait 1 timestep? Does the buffer of the emmited message pile up??
+        //wait 1 timestep? Does the buffer of the emmited message pile up??
 
-      /* Check error in position of robot */
-      /*rel_x = global_x*cos(loc[0][3]) - global_z*sin(loc[0][3]);
-      rel_z = -global_x*sin(loc[0][3]) - global_z*cos(loc[0][3]);
-      temp_err = sqrt(pow(rel_x-good_rp[i][0],2) + pow(rel_z-good_rp[i][1],2));
-      if (print_enabled)
-        printf("Err %d: %.3f, ",i,temp_err);
-      err += temp_err/ROBOTS; */
+        /* Check error in position of robot */
+        /*rel_x = global_x*cos(loc[0][3]) - global_z*sin(loc[0][3]);
+        rel_z = -global_x*sin(loc[0][3]) - global_z*cos(loc[0][3]);
+        temp_err = sqrt(pow(rel_x-good_rp[i][0],2) + pow(rel_z-good_rp[i][1],2));
+        if (print_enabled)
+          printf("Err %d: %.3f, ",i,temp_err);
+        err += temp_err/ROBOTS; */
+        cnt++;
       }
     }
 

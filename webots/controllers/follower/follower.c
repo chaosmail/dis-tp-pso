@@ -21,7 +21,7 @@
 WbDeviceTag ds[NB_SENSOR];
 WbDeviceTag emitter;
 WbDeviceTag rec;                      // Handle for the receiver of particles
-WbDeviceTag receiver_rb;              // Handle for the receiver of range and bearing information
+//WbDeviceTag receiver_rb;              // Handle for the receiver of range and bearing information
 double good_w[DATASIZE] = {-11.15, -16.93, -8.20, -18.11, -17.99, 8.55, -8.89, 3.52, 29.74,
 			     -7.48, 5.61, 11.16, -9.54, 4.58, 1.41, 2.09, 26.50, 23.11,
 			     -3.44, -3.78, 23.20, 8.41};
@@ -40,7 +40,7 @@ void reset(void) {
     }
     emitter = wb_robot_get_device("emitter");
     rec = wb_robot_get_device("receiver");
-    receiver_rb = wb_robot_get_device("receiver_rb");
+    //receiver_rb = wb_robot_get_device("receiver_rb");
 }
 
 double fitfunc(double[],int);
@@ -56,19 +56,25 @@ int main() {
     for(i=0;i<NB_SENSOR;i++) {
         distance_sensor_enable(ds[i],64);
     }
+    
     receiver_enable(rec,32);
-    wb_receiver_enable(receiver_rb,32); 
+    
+    //wb_receiver_enable(receiver_rb,32); 
     differential_wheels_enable_encoders(64);
     braiten = 0; // Don't run forever
     robot_step(64);
+    
     while (1) {
+        
         // Wait for data
         while (receiver_get_queue_length(rec) == 0) {
+            // We have an error here
             robot_step(64);
         }
+      
         rbuffer = (double *)wb_receiver_get_data(rec);
         wb_receiver_next_packet(rec);
-       
+
         // Check for pre-programmed avoidance behavior
         if (rbuffer[DATASIZE] == -1.0) {
             braiten = 1;
@@ -154,6 +160,7 @@ double fitfunc(double weights[DATASIZE],int its) {
 
     // Evaluate fitness repeatedly
     for (j=0;j<its;j++) {
+        
         if (braiten) j--;            // Loop forever
 
         ds_value[0] = (double) wb_distance_sensor_get_value(ds[0]);
@@ -222,20 +229,19 @@ double fitfunc(double weights[DATASIZE],int its) {
             sens_val[i] += ds_value[i]/MAX_SENS;*/
 
         /* Receive leader range, bearing and relative heading of leader */
-        if (wb_receiver_get_queue_length(receiver_rb) > 0) {
-          rbbuffer = (float*) wb_receiver_get_data(receiver_rb);
+        while (wb_receiver_get_queue_length(rec) > 0) {
+            
+          rbbuffer = (float*) wb_receiver_get_data(rec);
           new_leader_range = sqrt(rbbuffer[0]*rbbuffer[0] + rbbuffer[1]*rbbuffer[1]);
           new_leader_bearing = -atan2(rbbuffer[0],rbbuffer[1]);
           new_relative_heading = rbbuffer[2];
 
-          wb_receiver_next_packet(receiver_rb);
+          wb_receiver_next_packet(rec);
         }
 
-          fit_range+=new_leader_range;
-          fit_bearing+=new_leader_bearing;
-          fit_relative_heading+=new_relative_heading;
-
-
+        fit_range += new_leader_range;
+        fit_bearing += new_leader_bearing;
+        fit_relative_heading += new_relative_heading;
     }
 
     /*// Find most active sensor
