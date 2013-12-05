@@ -5,8 +5,8 @@
 #include <webots/receiver.h>
 #include <webots/supervisor.h>
 
-#define ROBOTS 4                        //counting 3 followers + leader
-#define MAX_ROB 4
+#define ROBOTS 3                        
+#define MAX_ROB 3
 #define ROB_RAD 0.035
 #define ARENA_SIZE 1.89
 
@@ -36,24 +36,26 @@
 #define NEIGHBORHOOD STANDARD
 #define RADIUS 0.8
 
-// Needed for leader localisation
-static WbNodeRef robs[ROBOTS];
-static WbFieldRef robs_translation[ROBOTS];
-static WbFieldRef robs_rotation[ROBOTS];
-double loc[ROBOTS][4];
+// Needed for localisation
+//static WbNodeRef robs[ROBOTS];
+static WbNodeRef robs[4]; 
+static WbFieldRef robs_translation[4];
+static WbFieldRef robs_rotation[4];
+double loc[4][4]; //needed to communicate leader positions to follower
 //-----------------------
 
-static WbNodeRef robs[MAX_ROB];
+
 WbDeviceTag emitter[MAX_ROB];
 WbDeviceTag rec[MAX_ROB];
-const double *locTemp[MAX_ROB];
-const double *rot[MAX_ROB];
-double new_loc[MAX_ROB][3];
-double new_rot[MAX_ROB][4];
+const double *locTemp[4];
+const double *rot[4];
+double new_loc[4][3];
+double new_rot[4][4];
 
 
 void calc_fitness(double[][DATASIZE],double[],int,int);
-void random_pos(int);
+//void random_pos(int);
+void reset_pos(int);
 void nRandom(int[][SWARMSIZE],int);
 void nClosest(int[][SWARMSIZE],int);
 void fixedRadius(int[][SWARMSIZE],double);
@@ -66,7 +68,15 @@ void reset(void) {
   char em2[] = "emitter10";
   char receive2[] = "receiver10";
   int i;
-  for (i=0;i<10 && i<MAX_ROB;i++) {
+  for (i=0;i<3;i++) { //emmiters & receivers -> not for leader
+    emitter[i] = wb_robot_get_device(em);
+    if (emitter[i]==0) printf("missing emitter %d\n",i);
+    rec[i] = wb_robot_get_device(receive);
+    em[7]++;
+    receive[8]++;
+  }
+  
+  for (i=0;i<4;i++) { //Position -> for all robots
     robs[i] = wb_supervisor_node_get_from_def(rob);
     robs_translation[i] = wb_supervisor_node_get_field(robs[i],"translation");
     robs_rotation[i] = wb_supervisor_node_get_field(robs[i],"rotation");
@@ -74,26 +84,10 @@ void reset(void) {
     new_loc[i][0] = locTemp[i][0]; new_loc[i][1] = locTemp[i][1]; new_loc[i][2] = locTemp[i][2];
     rot[i] = wb_supervisor_field_get_sf_rotation(robs_rotation[i]);
     new_rot[i][0] = rot[i][0]; new_rot[i][1] = rot[i][1]; new_rot[i][2] = rot[i][2]; new_rot[i][3] = rot[i][3];
-    emitter[i] = wb_robot_get_device(em);
-    if (emitter[i]==0) printf("missing emitter %d\n",i);
-    rec[i] = wb_robot_get_device(receive);
     rob[3]++;
-    em[7]++;
-    receive[8]++;
+
   }
-  /*for (i=10;i<20 && i<MAX_ROB;i++) {                  //We don't have that many robots
-    robs[i] = wb_supervisor_node_get_from_def(rob2);
-    loc[i] = wb_supervisor_field_get_sf_vec3f(wb_supervisor_node_get_field(robs[i],"translation"));
-    new_loc[i][0] = loc[i][0]; new_loc[i][1] = loc[i][1]; new_loc[i][2] = loc[i][2];
-    rot[i] = wb_supervisor_field_get_sf_rotation(wb_supervisor_node_get_field(robs[i],"rotation"));
-    new_rot[i][0] = rot[i][0]; new_rot[i][1] = rot[i][1]; new_rot[i][2] = rot[i][2]; new_rot[i][3] = rot[i][3];
-    emitter[i] = wb_robot_get_device(em2);
-    if (emitter[i]==0) printf("missing emitter %d\n",i);
-    rec[i] = wb_robot_get_device(receive2);
-    rob2[4]++;
-    em2[8]++;
-    receive2[9]++;
-  }*/
+  
 
 }
 
@@ -180,7 +174,7 @@ char valid_locs(int rob_id) {
 }
 
 // Randomly position specified robot
-void random_pos(int rob_id) {
+/*void random_pos(int rob_id) {
   //printf("Setting random position for %d\n",rob_id);
   new_rot[rob_id][0] = 0.0;
   new_rot[rob_id][1] = 1.0;
@@ -195,6 +189,18 @@ void random_pos(int rob_id) {
 
   wb_supervisor_field_set_sf_vec3f(wb_supervisor_node_get_field(robs[rob_id],"translation"), new_loc[rob_id]);
   wb_supervisor_field_set_sf_rotation(wb_supervisor_node_get_field(robs[rob_id],"rotation"), new_rot[rob_id]);
+}*/
+void reset_pos(int rob_id) {
+  new_rot[rob_id][0] = 0.0;
+  new_rot[rob_id][1] = 1.0;
+  new_rot[rob_id][2] = 0.0;
+  new_rot[rob_id][3] = -1.57;
+  
+  new_loc[rob_id][0]=-0.3+0.1*rob_id;
+  new_loc[rob_id][2]=0;
+    
+  wb_supervisor_field_set_sf_vec3f(wb_supervisor_node_get_field(robs[rob_id],"translation"), new_loc[rob_id]);
+  wb_supervisor_field_set_sf_rotation(wb_supervisor_node_get_field(robs[rob_id],"rotation"), new_rot[rob_id]);
 }
 
 // Distribute fitness functions among robots
@@ -207,68 +213,75 @@ void calc_fitness(double weights[ROBOTS][DATASIZE], double fit[ROBOTS], int its,
   int cnt = 0;
   int send_interval = 10;
 
-	for(k=0;k<ROBOTS;k++){ // assume robot 0 is leader and the followers are 1,2,3 in order
+	for(k=0;k<ROBOTS;k++){  //WATCH OUT this sends the same weight k to all the robots->homogenous
     
 		// Send data to robots */
 		fit[k]=0;
-		for (i=1;i<numRobs;i++) { //send data to followers 1,2,3
-			random_pos(i);
+		for (i=0;i<numRobs;i++) { //send data to followers 0,1,2
+			reset_pos(i); //puts robots back to initial chain position
+      if (i==2){reset_pos(3);} //resets leader
 			for (j=0;j<DATASIZE;j++) {
 				buffer[j] = weights[k][j];
 			}
 			buffer[DATASIZE] = its;
 			wb_emitter_send(emitter[i],(void *)buffer,(DATASIZE+1)*sizeof(double));
       printf("%f %f %f %f %f\n",buffer[0],buffer[1],buffer[2],buffer[3],buffer[4]);
-      
-		}
+      }
     
 		// Wait for response */
 		while (wb_receiver_get_queue_length(rec[0]) == 0){
+      //printf("Supervisor waiting for response");
+		  
+      for (i=0;i<ROBOTS;i++) {
+      //printf("testSup2\n");
 
-		  for (i=1;i<ROBOTS;i++) {
-      
-        /* Get position of leader and follower */
-        loc[i-1][0] = wb_supervisor_field_get_sf_vec3f(robs_translation[0])[0];
-        loc[i-1][1] = wb_supervisor_field_get_sf_vec3f(robs_translation[0])[1];
-        loc[i-1][2] = wb_supervisor_field_get_sf_vec3f(robs_translation[0])[2];
-        loc[i-1][3] = wb_supervisor_field_get_sf_rotation(robs_rotation[0])[3];
+        
+        //leader is the one in front
+        loc[i+1][0] = wb_supervisor_field_get_sf_vec3f(robs_translation[i+1])[0];
+        loc[i+1][1] = wb_supervisor_field_get_sf_vec3f(robs_translation[i+1])[1];
+        loc[i+1][2] = wb_supervisor_field_get_sf_vec3f(robs_translation[i+1])[2];
+        loc[i+1][3] = wb_supervisor_field_get_sf_rotation(robs_rotation[i+1])[3];
+        
+        
         loc[i][0] = wb_supervisor_field_get_sf_vec3f(robs_translation[i])[0];
         loc[i][1] = wb_supervisor_field_get_sf_vec3f(robs_translation[i])[1];
         loc[i][2] = wb_supervisor_field_get_sf_vec3f(robs_translation[i])[2];
         loc[i][3] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3];
 
-        /* Find global relative coordinates */
-        global_x = loc[i][0] - loc[i-1][0];
-        global_z = loc[i][2] - loc[i-1][2];
-        /* Calculate relative coordinates */
+        // Find global relative coordinates 
+        global_x = loc[i][0] - loc[i+1][0];
+        global_z = loc[i][2] - loc[i+1][2];
+        // Calculate relative coordinates 
         rel_x = -global_x*cos(loc[i][3]) + global_z*sin(loc[i][3]);
         rel_z = global_x*sin(loc[i][3]) + global_z*cos(loc[i][3]);
         buffer_loc[0] = rel_x; // distance in direction of the heading of the robot
         buffer_loc[1] = rel_z;// distance perpendicular to heading
-        buffer_loc[2] = loc[0][3] - loc[i][3]; // relative heading
+        buffer_loc[2] = loc[i+1][3] - loc[i][3]; // relative heading
         while (buffer_loc[2] > M_PI) buffer_loc[2] -= 2.0*M_PI;
         while (buffer_loc[2] < -M_PI) buffer_loc[2] += 2.0*M_PI;
         
         if (cnt%send_interval == 0) {
-          wb_emitter_send(emitter[i],(char *)buffer_loc,3*sizeof(float));
+          //printf("supervisor send positions\n");
+          //wb_emitter_send(emitter[i],(char *)buffer_loc,3*sizeof(float));
           cnt = 0;
         }
 
         //wait 1 timestep? Does the buffer of the emmited message pile up??
 
-        /* Check error in position of robot */
-        /*rel_x = global_x*cos(loc[0][3]) - global_z*sin(loc[0][3]);
-        rel_z = -global_x*sin(loc[0][3]) - global_z*cos(loc[0][3]);
-        temp_err = sqrt(pow(rel_x-good_rp[i][0],2) + pow(rel_z-good_rp[i][1],2));
-        if (print_enabled)
-          printf("Err %d: %.3f, ",i,temp_err);
-        err += temp_err/ROBOTS; */
+        // Check error in position of robot 
+        //rel_x = global_x*cos(loc[0][3]) - global_z*sin(loc[0][3]);
+        //rel_z = -global_x*sin(loc[0][3]) - global_z*cos(loc[0][3]);
+        //temp_err = sqrt(pow(rel_x-good_rp[i][0],2) + pow(rel_z-good_rp[i][1],2));
+        //if (print_enabled)
+        //  printf("Err %d: %.3f, ",i,temp_err);
+        //err += temp_err/ROBOTS; 
         cnt++;
       }
+      wb_robot_step(64);
     }
 
 		// Get fitness values */
-		for (i=1;i<numRobs;i++) {
+		for (i=0;i<numRobs;i++) {
 			rbuffer = (double *)wb_receiver_get_data(rec[i]);
 			fit[k] += rbuffer[0];
 			wb_receiver_next_packet(rec[i]);

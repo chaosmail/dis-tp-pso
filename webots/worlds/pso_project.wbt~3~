@@ -202,7 +202,6 @@ Supervisor {
   controller "pso_chain_sup"
 }
 DEF rob1 DifferentialWheels {
-  translation -0.2 0 0
   rotation 0 1 0 -1.57
   children [
     DEF EPUCK_LEFT_WHEEL Solid {
@@ -1852,7 +1851,7 @@ DEF rob1 DifferentialWheels {
   encoderResolution 159.23
 }
 DEF rob0 DifferentialWheels {
-  translation -0.3 0 0
+  translation -0.1 0 0
   rotation 0 1 0 -1.57
   children [
     DEF EPUCK_LEFT_WHEEL Solid {
@@ -3491,7 +3490,7 @@ DEF rob0 DifferentialWheels {
     mass 0.15
     centerOfMass 0 0.015 0
   }
-  controller "follower"
+  controller "leader"
   axleLength 0.052
   wheelRadius 0.0205
   maxSpeed 6.28
@@ -3501,7 +3500,7 @@ DEF rob0 DifferentialWheels {
   encoderResolution 159.23
 }
 DEF rob2 DifferentialWheels {
-  translation -0.1 0 0
+  translation -0.2 0 0
   rotation 0 1 0 -1.57
   children [
     DEF EPUCK_LEFT_WHEEL Solid {
@@ -5332,6 +5331,7 @@ DEF rob2 DifferentialWheels {
   encoderResolution 159.23
 }
 DEF rob3 DifferentialWheels {
+  translation 0.1 0 0
   rotation 0 1 0 -1.57
   children [
     DEF EPUCK_LEFT_WHEEL Solid {
@@ -6971,7 +6971,7 @@ DEF rob3 DifferentialWheels {
     mass 0.15
     centerOfMass 0 0.015 0
   }
-  controller "leader"
+  controller "follower"
   axleLength 0.052
   wheelRadius 0.0205
   maxSpeed 6.28

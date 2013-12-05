@@ -22,9 +22,9 @@ WbDeviceTag ds[NB_SENSOR];
 WbDeviceTag emitter;
 WbDeviceTag rec;                      // Handle for the receiver of particles
 //WbDeviceTag receiver_rb;              // Handle for the receiver of range and bearing information
-double good_w[DATASIZE] = {-11.15, -16.93, -8.20, -18.11, -17.99, 8.55, -8.89, 3.52, 29.74,
+/*double good_w[DATASIZE] = {-11.15, -16.93, -8.20, -18.11, -17.99, 8.55, -8.89, 3.52, 29.74,
 			     -7.48, 5.61, 11.16, -9.54, 4.58, 1.41, 2.09, 26.50, 23.11,
-			     -3.44, -3.78, 23.20, 8.41};
+			     -3.44, -3.78, 23.20, 8.41};*/
 
 int braiten;
 
@@ -69,24 +69,27 @@ int main() {
         // Wait for data
         while (receiver_get_queue_length(rec) == 0) {
             // We have an error here
+            printf("follower no message\n");
             robot_step(64);
         }
-      
+        //printf("*******test4*********\n");
         rbuffer = (double *)wb_receiver_get_data(rec);
         wb_receiver_next_packet(rec);
 
-        // Check for pre-programmed avoidance behavior
+        /*// Check for pre-programmed avoidance behavior
         if (rbuffer[DATASIZE] == -1.0) {
             braiten = 1;
             fitfunc(good_w,100);
             
             // Otherwise, run provided controller
-        } else {
+        } else {*/
+            printf("***start fitfunc\n");
             fit = fitfunc(rbuffer,rbuffer[DATASIZE]); //evaluates fitness of the received particle
+            printf("end fitfunc\n*******");
             buffer[0] = fit;
             wb_emitter_send(emitter,(void *)buffer,sizeof(double)); //sends the fitness back to the controller.
             
-        }
+        //}
 
                 
     }
