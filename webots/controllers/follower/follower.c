@@ -8,6 +8,9 @@
 #include <webots/emitter.h>
 #include <webots/receiver.h>
 
+
+/********** Constants **********/
+
 #define MAX_SPEED 1000.0 // Maximum speed of wheels in each direction
 #define MAX_ACC 1000.0 // Maximum amount speed can change in 128 ms
 #define NB_SENSOR 8 // Number of proximity sensors
@@ -18,34 +21,46 @@
 #define MAX_DIFF (2*MAX_SPEED) // Maximum difference between wheel speeds
 #define MAX_SENS 4096.0 // Maximum sensor value
 
-WbDeviceTag ds[NB_SENSOR];
-WbDeviceTag emitter;
-WbDeviceTag rec;                      // Handle for the receiver of particles
-//WbDeviceTag receiver_rb;              // Handle for the receiver of range and bearing information
-/*double good_w[DATASIZE] = {-11.15, -16.93, -8.20, -18.11, -17.99, 8.55, -8.89, 3.52, 29.74,
-			     -7.48, 5.61, 11.16, -9.54, 4.58, 1.41, 2.09, 26.50, 23.11,
-			     -3.44, -3.78, 23.20, 8.41};*/
 
+/********** Global vars **********/
+
+WbDeviceTag ds[NB_SENSOR]; // Webots Device: Sensors
+WbDeviceTag emitter; // Webots Device: Emitter of the messages
+WbDeviceTag rec; // Webots Device: Handle for the receiver of particles
 int braiten;
+double good_w[DATASIZE] = {-11.15, -16.93, -8.20, -18.11, -17.99, 8.55, -8.89, 3.52, 29.74,
+			     -7.48, 5.61, 11.16, -9.54, 4.58, 1.41, 2.09, 26.50, 23.11,
+			     -3.44, -3.78, 23.20, 8.41};
+
+
+/********** Function declarations **********/
+
+double fitfunc(double[],int);
+
+
+
+/********** Function implementations **********/
+
 
 void reset(void) {
+    
     char text[4];
     int i;
     text[1]='s';
     text[3]='\0';
+    
     for (i=0;i<NB_SENSOR;i++) {
         text[0]='p';
         text[2]='0'+i;
         ds[i] = wb_robot_get_device(text); // distance sensors
     }
+    
     emitter = wb_robot_get_device("emitter");
     rec = wb_robot_get_device("receiver");
-    //receiver_rb = wb_robot_get_device("receiver_rb");
 }
 
-double fitfunc(double[],int);
-
 int main() {
+
     double buffer[255];
     double *rbuffer;
     double fit;
@@ -59,41 +74,41 @@ int main() {
     
     receiver_enable(rec,32);
     
-    //wb_receiver_enable(receiver_rb,32); 
     differential_wheels_enable_encoders(64);
     braiten = 0; // Don't run forever
     robot_step(64);
     
     while (1) {
         
-        // Wait for data
+        // Wait for data: Weights for Braitenberg Controller
         while (receiver_get_queue_length(rec) == 0) {
-            // We have an error here
-            printf("follower no message\n");
             robot_step(64);
         }
-        //printf("*******test4*********\n");
-        rbuffer = (double *)wb_receiver_get_data(rec);
-        wb_receiver_next_packet(rec);
 
-        /*// Check for pre-programmed avoidance behavior
+        // Read as long as data is available
+        while (receiver_get_queue_length(rec) > 0) {
+            rbuffer = (double *)wb_receiver_get_data(rec);
+            wb_receiver_next_packet(rec);
+        }
+
+        // Check for pre-programmed avoidance behavior
         if (rbuffer[DATASIZE] == -1.0) {
+
             braiten = 1;
             fitfunc(good_w,100);
-            
-            // Otherwise, run provided controller
-        } else {*/
-            printf("***start fitfunc\n");
-            fit = fitfunc(rbuffer,rbuffer[DATASIZE]); //evaluates fitness of the received particle
-            printf("end fitfunc\n*******");
-            buffer[0] = fit;
-            wb_emitter_send(emitter,(void *)buffer,sizeof(double)); //sends the fitness back to the controller.
-            
-        //}
+        } 
+        // Otherwise, run provided controller
+        else {
 
-                
+            // printf("Start evaluating fitness\n");
+            fit = fitfunc(rbuffer,rbuffer[DATASIZE]); //evaluates fitness of the received particle
+            // printf("Stopped evaluating fitness\n");
+            
+            buffer[0] = fit;
+            wb_emitter_send(emitter,(void *)buffer,sizeof(double)); //sends the fitness back to the controller. 
+        }   
     }
-        
+
     return 0;
 }
 
@@ -127,13 +142,20 @@ double s(double v) {
 }
 
 // Find the fitness for obstacle avoidance of the passed controller
-double fitfunc(double weights[DATASIZE],int its) {
+double fitfunc(double weights[DATASIZE], int its) {
+    
     double left_speed,right_speed; // Wheel speeds
     double old_left, old_right; // Previous wheel speeds (for recursion)
     int left_encoder,right_encoder;
     double ds_value[NB_SENSOR];
-    int i,j;
+    int i,j; // Loop vars
 
+    // Print the received weights
+    /*printf("%d iterations with ",its);
+    for (i=0; i<DATASIZE; i++) {
+        printf(" %.2f",weights[DATASIZE]);
+    }
+    printf("\n");*/
 
     // Fitness variables
     /*double fit_speed;           // Speed aspect of fitness
@@ -217,6 +239,7 @@ double fitfunc(double weights[DATASIZE],int its) {
         right_encoder = wb_differential_wheels_get_right_encoder();
         if (left_encoder>9000) wb_differential_wheels_set_encoders(0,right_encoder);
         if (right_encoder>1000) wb_differential_wheels_set_encoders(left_encoder,0);
+        
         // Set the motor speeds
         wb_differential_wheels_set_speed((int)left_speed,(int)right_speed); 
         robot_step(128); // run one step
@@ -235,6 +258,10 @@ double fitfunc(double weights[DATASIZE],int its) {
         while (wb_receiver_get_queue_length(rec) > 0) {
             
           rbbuffer = (float*) wb_receiver_get_data(rec);
+
+          // this data is received, it is totally different from the sent one
+          printf("x %.2f, z %.2f, phi %.2f\n",rbbuffer[0] , rbbuffer[1], rbbuffer[2]);
+          
           new_leader_range = sqrt(rbbuffer[0]*rbbuffer[0] + rbbuffer[1]*rbbuffer[1]);
           new_leader_bearing = -atan2(rbbuffer[0],rbbuffer[1]);
           new_relative_heading = rbbuffer[2];
@@ -264,6 +291,7 @@ double fitfunc(double weights[DATASIZE],int its) {
     int B=1; //importance coefficient of bearing
     int C=1; //importance coefficient of relative heading
     fitness = 1/(A*fit_range+B*fit_bearing+C*fit_relative_heading);
+    printf("fitness %.2f = range %.2f, bearing %.2f, heading %.2f\n", fitness, fit_range, fit_bearing, fit_relative_heading);
     return fitness;
 }
 

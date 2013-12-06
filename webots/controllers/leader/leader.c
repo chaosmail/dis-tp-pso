@@ -8,6 +8,9 @@
 #include <webots/emitter.h>
 #include <webots/receiver.h>
 
+
+/********** Constants **********/
+
 #define MAX_SPEED 1000.0 // Maximum speed of wheels in each direction
 #define MAX_ACC 1000.0 // Maximum amount speed can change in 128 ms
 #define NB_SENSOR 8 // Number of proximity sensors
@@ -18,14 +21,26 @@
 #define MAX_DIFF (2*MAX_SPEED) // Maximum difference between wheel speeds
 #define MAX_SENS 4096.0 // Maximum sensor value
 
-WbDeviceTag ds[NB_SENSOR];
-WbDeviceTag emitter;
-WbDeviceTag rec;
+
+/********** Global vars **********/
+
+WbDeviceTag ds[NB_SENSOR]; // Webots Device: Sensors
+WbDeviceTag emitter; // Webots Device: Emitter of the messages
+WbDeviceTag rec; // Webots Device: Handle for the receiver of particles
+
 double good_w[DATASIZE] = {-11.15, -16.93, -8.20, -18.11, -17.99, 8.55, -8.89, 3.52, 29.74,
 			     -7.48, 5.61, 11.16, -9.54, 4.58, 1.41, 2.09, 26.50, 23.11,
 			     -3.44, -3.78, 23.20, 8.41};
 
 int braiten;
+
+/********** Function declarations **********/
+
+double fitfunc(double[],int);
+double rnd();
+
+
+/********** Function implementations **********/
 
 void reset(void) {
     char text[4];
@@ -41,9 +56,8 @@ void reset(void) {
     rec = wb_robot_get_device("receiver");
 }
 
-double fitfunc(double[],int);
-
 int main() {
+
     double buffer[255];
     double *rbuffer;
     double fit;
@@ -58,8 +72,14 @@ int main() {
     differential_wheels_enable_encoders(64);
     braiten = 0; // Don't run forever
 
+    int speed = 0;
+
     robot_step(64);
     while (1) {
+
+        // Leader just moves ranomly
+        speed = (int) (MAX_SPEED*rnd());
+        wb_differential_wheels_set_speed(speed,speed); 
  /*       // Wait for data
         while (receiver_get_queue_length(rec) == 0) {
             robot_step(64);

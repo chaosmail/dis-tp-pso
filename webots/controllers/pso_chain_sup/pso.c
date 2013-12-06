@@ -7,7 +7,7 @@
 /*                                                */
 /**************************************************/
 
-#define VERBOSE 0
+#define VERBOSE 1
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -96,11 +96,13 @@ double* pso(int n_swarmsize, int n_nb, double lweight, double nbweight, double v
   
   // Best performances are initially current performances
   findPerformance(swarm,perf,NULL,EVOLVE,robots,neighbors);
+
   for (i = 0; i < swarmsize; i++) {
     lbestperf[i] = perf[i];
     lbestage[i] = 1.0;                    // One performance so far
     nbbestperf[i] = perf[i];
   }
+  
   updateNBPerf(lbest,lbestperf,nbbest,nbbestperf,neighbors);  // Find best neighborhood performances
 
 #if VERBOSE == 1
@@ -190,11 +192,13 @@ void findPerformance(double swarm[swarmsize][datasize], double perf[swarmsize],
         perf[i+j] = ((age[i+j]-1.0)*perf[i+j] + fit[j])/age[i+j];
         age[i+j]++;
       }
-    } else if (type == EVOLVE) {
+    } 
+    else if (type == EVOLVE) {
       fitness(particles,fit,neighbors);
       for (j=0;j<robots && i+j<swarmsize;j++)
         perf[i+j] = fit[j];
-    } else if (type == SELECT) {
+    } 
+    else if (type == SELECT) {
       for (j=0;j<robots && i+j<swarmsize;j++)
         perf[i+j] = 0.0;
       for (k=0;k<5;k++) {
