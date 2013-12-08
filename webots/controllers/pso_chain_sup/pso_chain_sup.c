@@ -249,9 +249,9 @@ void calc_fitness(double weights[ROBOTS][DATASIZE], double fit[ROBOTS], int its,
 	
   double buffer[255];// to send particles to robots
   double buffer_loc[255];//to send positions to robot
-	double *rbuffer; //to get fitness from robots
+  double *rbuffer; //to get fitness from robots
   double global_x,global_z,rel_x,rel_z; //for localisation
-	int i,j,k;
+  int i,j,k;
   int cnt = 0;
   int send_interval = 10;
 

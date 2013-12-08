@@ -83,14 +83,21 @@ double* pso(int n_swarmsize, int n_nb, double lweight, double nbweight, double v
     }
   }
 
-  // Initialize the swarm
+  // Initialize the swarm:
+  // Here, the initial particles are generated for PSO
+  // in our case these are the weights of the braitenberg controller
   for (i = 0; i < swarmsize; i++) {
     for (j = 0; j < datasize; j++) {
-      // Randomly assign initial value in [min,max]
+
+      // Randomly assign different initial values in [min,max]
       swarm[i][j] = (max-min)*rnd()+min;
-      lbest[i][j] = swarm[i][j];           // Best configurations are initially current configurations
+
+      // Best configurations are initially current configurations
+      lbest[i][j] = swarm[i][j];
       nbbest[i][j] = swarm[i][j];
-      v[i][j] = 2.0*vmax*rnd()-vmax;         // Random initial velocity
+
+      // The velocity of changes in the particle values
+      v[i][j] = 2.0*vmax*rnd()-vmax; // Random initial velocity
     }
   }
   
@@ -105,33 +112,35 @@ double* pso(int n_swarmsize, int n_nb, double lweight, double nbweight, double v
   
   updateNBPerf(lbest,lbestperf,nbbest,nbbestperf,neighbors);  // Find best neighborhood performances
 
-#if VERBOSE == 1
-  printf("Swarm initialized\n");
-#endif
+    #if VERBOSE == 1
+      printf("Swarm initialized\n");
+    #endif
 
   // Run optimization
   for (k = 0; k < ITS_COEFF*iterations; k++) {
     
-#if VERBOSE == 1
-    printf("Iteration %d\n",k);
-#endif
+    #if VERBOSE == 1
+        printf("Iteration %d\n",k);
+    #endif
+
     sprintf(label, "Iteration: %d",k+1);
     wb_supervisor_set_label(0,label,0.01,0.01,0.1,0xffffff,0);
+
     // Update preferences and generate new particles
     for (i = 0; i < swarmsize; i++) {
       for (j = 0; j < datasize; j++) {
-	// Adjust preferences
-	v[i][j] += lweight*rnd()*(lbest[i][j] - swarm[i][j]) + nbweight*rnd()*(nbbest[i][j] - swarm[i][j]);
-	v[i][j] *= 0.6;
-	swarm[i][j] += v[i][j];
+        // Adjust preferences
+        v[i][j] += lweight*rnd()*(lbest[i][j] - swarm[i][j]) + nbweight*rnd()*(nbbest[i][j] - swarm[i][j]);
+        v[i][j] *= 0.6;
+        swarm[i][j] += v[i][j];
 
       }
     }
 
     // RE-EVALUATE PERFORMANCES OF PREVIOUS BESTS
-#if NOISY == 1
-    findPerformance(lbest,lbestperf,lbestage,EVOLVE_AVG,robots,neighbors);
-#endif    
+    #if NOISY == 1
+        findPerformance(lbest,lbestperf,lbestage,EVOLVE_AVG,robots,neighbors);
+    #endif
 
     // Find new performance
     findPerformance(swarm,perf,NULL,EVOLVE,robots,neighbors);
@@ -142,11 +151,11 @@ double* pso(int n_swarmsize, int n_nb, double lweight, double nbweight, double v
     // Update best neighborhood performance
     updateNBPerf(lbest,lbestperf,nbbest,nbbestperf,neighbors);
 
-#if VERBOSE == 1
-    double temp[datasize];
-    bestperf = bestResult(lbest,lbestperf,temp);
-    printf("%f\n",bestperf);
-#endif
+    #if VERBOSE == 1
+        double temp[datasize];
+        bestperf = bestResult(lbest,lbestperf,temp);
+        printf("%f\n",bestperf);
+    #endif
 
   }
 
