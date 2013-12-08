@@ -301,13 +301,13 @@ void calc_fitness(double weights[ROBOTS][DATASIZE], double fit[ROBOTS], int its,
                 loc[i+1][0] = wb_supervisor_field_get_sf_vec3f(robs_translation[i+1])[0];
                 loc[i+1][1] = wb_supervisor_field_get_sf_vec3f(robs_translation[i+1])[1];
                 loc[i+1][2] = wb_supervisor_field_get_sf_vec3f(robs_translation[i+1])[2];
-                loc[i+1][3] = wb_supervisor_field_get_sf_rotation(robs_rotation[i+1])[3]+0.5*M_PI;
+                loc[i+1][3] = wb_supervisor_field_get_sf_rotation(robs_rotation[i+1])[3];
 
 
                 loc[i][0] = wb_supervisor_field_get_sf_vec3f(robs_translation[i])[0];
                 loc[i][1] = wb_supervisor_field_get_sf_vec3f(robs_translation[i])[1];
                 loc[i][2] = wb_supervisor_field_get_sf_vec3f(robs_translation[i])[2];
-                loc[i][3] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]+0.5*M_PI;
+                loc[i][3] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3];
                 
                 printf("Robot %i heading: %.2f", i , loc[i][3]);
                 //printf("Robot %i y: %.2f", i , loc[i][1]);
