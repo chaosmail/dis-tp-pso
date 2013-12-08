@@ -67,15 +67,17 @@ int main() {
     receiver_enable(rec,32);
     differential_wheels_enable_encoders(64);
     braiten = 0; // Don't run forever
-
-    int speed = 0;
+    
+    int speedl = 0;
+    int speedr = 0;
 
     robot_step(64);
     while (1) {
 
         // Leader just moves ranomly
-        speed = (int) (MAX_SPEED*rnd());
-        wb_differential_wheels_set_speed(speed,speed);
+        speedl = (int) (MAX_SPEED*rnd());
+        speedr = (int) (MAX_SPEED*rnd());
+        wb_differential_wheels_set_speed(speedl,speedr);
 
         robot_step(64);
     }
