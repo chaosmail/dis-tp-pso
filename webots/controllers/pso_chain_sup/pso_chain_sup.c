@@ -301,14 +301,17 @@ void calc_fitness(double weights[ROBOTS][DATASIZE], double fit[ROBOTS], int its,
                 loc[i+1][0] = wb_supervisor_field_get_sf_vec3f(robs_translation[i+1])[0];
                 loc[i+1][1] = wb_supervisor_field_get_sf_vec3f(robs_translation[i+1])[1];
                 loc[i+1][2] = wb_supervisor_field_get_sf_vec3f(robs_translation[i+1])[2];
-                loc[i+1][3] = wb_supervisor_field_get_sf_rotation(robs_rotation[i+1])[3];
+                loc[i+1][3] = wb_supervisor_field_get_sf_rotation(robs_rotation[i+1])[3]+0.5*M_PI;
 
 
                 loc[i][0] = wb_supervisor_field_get_sf_vec3f(robs_translation[i])[0];
                 loc[i][1] = wb_supervisor_field_get_sf_vec3f(robs_translation[i])[1];
                 loc[i][2] = wb_supervisor_field_get_sf_vec3f(robs_translation[i])[2];
-                loc[i][3] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3];
-
+                loc[i][3] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3]+0.5*M_PI;
+                
+                printf("Robot %i heading: %.2f", i , loc[i][3]);
+                //printf("Robot %i y: %.2f", i , loc[i][1]);
+                
                 // Find global relative coordinates
                 global_x = loc[i][0] - loc[i+1][0];
                 global_z = loc[i][2] - loc[i+1][2];
@@ -326,7 +329,7 @@ void calc_fitness(double weights[ROBOTS][DATASIZE], double fit[ROBOTS], int its,
                 if (cnt%send_interval == 5) {
 
                     // data is send, it seems to be correct
-                    printf("x %.2f, z %.2f, phi %.2f\n",buffer_loc[0] , buffer_loc[1], buffer_loc[2]);
+                    printf("Robot %i: x %.2f, z %.2f, phi %.2f\n",i , buffer_loc[0] , buffer_loc[1], buffer_loc[2]);
 
                     wb_emitter_send(emitter[i],(char *)buffer_loc,3*sizeof(float));
                     cnt = 0;

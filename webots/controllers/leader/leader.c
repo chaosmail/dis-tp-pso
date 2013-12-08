@@ -32,7 +32,7 @@ int braiten;
 
 /********** Function declarations **********/
 
-double fitfunc(double[],int);
+//double fitfunc(double[],int);
 double rnd();
 
 
@@ -114,7 +114,7 @@ double s(double v) {
         return 1.0/(1.0 + exp(-1*v));
 }
 
-// Find the fitness for obstacle avoidance of the passed controller
+/*// Find the fitness for obstacle avoidance of the passed controller
 double fitfunc(double weights[DATASIZE],int its) {
     double left_speed,right_speed; // Wheel speeds
     double old_left, old_right; // Previous wheel speeds (for recursion)
@@ -223,5 +223,5 @@ double fitfunc(double weights[DATASIZE],int its) {
     fitness = fit_speed*(1.0 - sqrt(fit_diff))*(1.0 - fit_sens);
 
     return fitness;
-}
+}*/
 
