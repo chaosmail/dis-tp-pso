@@ -92,6 +92,7 @@ int main() {
         }
 
         // Check for pre-programmed avoidance behavior
+        // We need this in the epuck when PSO is done
         if (rbuffer[DATASIZE] == -1.0) {
 
             braiten = 1;

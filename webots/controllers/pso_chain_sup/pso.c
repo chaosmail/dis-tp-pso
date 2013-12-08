@@ -10,6 +10,7 @@
 #define VERBOSE 1
 
 #include <stdio.h>
+#include <float.h>
 #include <stdlib.h>
 #include <math.h>
 
@@ -48,7 +49,8 @@ char label[20];
 /* max:         maximum initial value of particle element                    */
 /* iterations:  number of iterations to run in the optimization              */
 /* n_datasize:  number of elements in particle                               */
-double* pso(int n_swarmsize, int n_nb, double lweight, double nbweight, double vmax, double min, double max, int iterations, int n_datasize, int n_robots) {
+double* pso(int n_swarmsize, int n_nb, double lweight, double nbweight, double vmax, double min, double max, int iterations, int n_datasize, int n_robots, double initial_weight[n_datasize], double initial_velocity[n_datasize]) {
+
     double swarm[n_swarmsize][n_datasize];    // Swarm of particles
     double perf[n_swarmsize];                 // Current local performance of swarm
     double lbest[n_swarmsize][n_datasize];    // Current best local swarm
@@ -89,15 +91,27 @@ double* pso(int n_swarmsize, int n_nb, double lweight, double nbweight, double v
     for (i = 0; i < swarmsize; i++) {
         for (j = 0; j < datasize; j++) {
 
-            // Randomly assign different initial values in [min,max]
-            swarm[i][j] = (max-min)*rnd()+min;
+            if (initial_weight[j] != -DBL_MAX) {
+                // assign initial value
+                swarm[i][j] = initial_weight[j];
+            }
+            else {
+                // Randomly assign different initial values in [min,max]
+                swarm[i][j] = (max-min)*rnd()+min;
+            }
 
             // Best configurations are initially current configurations
             lbest[i][j] = swarm[i][j];
             nbbest[i][j] = swarm[i][j];
 
-            // The velocity of changes in the particle values
-            v[i][j] = 2.0*vmax*rnd()-vmax; // Random initial velocity
+            if (initial_velocity[j] != -DBL_MAX) {
+                // assign initial value
+                v[i][j] = initial_velocity[j];
+            }
+            else {
+                // The velocity of changes in the particle values
+                v[i][j] = 2.0*vmax*rnd()-vmax; // Random initial velocity
+            }
         }
     }
 

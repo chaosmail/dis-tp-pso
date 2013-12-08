@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <float.h>
 #include <math.h>
 #include "pso.h"
 #include <webots/emitter.h>
@@ -56,6 +57,17 @@ const double *rot[ROBOTS+1];
 double new_loc[ROBOTS+1][3];
 double new_rot[ROBOTS+1][4];
 
+// Initial Weights
+// Use -DBL_MAX to be randomly generated in PSO
+double initial_weight[DATASIZE] = {-11.15, -16.93, -8.20, -18.11, -17.99, 8.55, -8.89, 3.52, 29.74,
+                           -7.48, 5.61, 11.16, -9.54, 4.58, 1.41, 2.09, 26.50, 23.11,
+                           -3.44, -3.78, 23.20, 8.41};
+
+// Initial Change of Weights
+// Use -DBL_MAX to be randomly generated in PSO
+double initial_pso_velocity[DATASIZE] = {-DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX,
+                                  -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX,
+                                  -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX};
 
 /********** Function declarations **********/
 
@@ -141,7 +153,7 @@ int main() {
     for (j=0; j<10; j++) {
 
         /* Get result of evolution */
-        weights = pso(SWARMSIZE,NB,LWEIGHT,NBWEIGHT,VMAX,MININIT,MAXINIT,ITS,DATASIZE,ROBOTS);
+        weights = pso(SWARMSIZE,NB,LWEIGHT,NBWEIGHT,VMAX,MININIT,MAXINIT,ITS,DATASIZE,ROBOTS,initial_weight,initial_pso_velocity);
 
         /* Calculate performance */
         fit = 0.0;

@@ -12,7 +12,7 @@
 #define SWARMSIZE 10 
 
 // Functions
-double* pso(int,int,double,double,double,double,double,int,int,int); // Run particle swarm optimization
+double* pso(int,int,double,double,double,double,double,int,int,int,double[DATASIZE],double[DATASIZE]); // Run particle swarm optimization
 void fitness(double[][DATASIZE],double[],int[][SWARMSIZE]);                       // Fitness function for particle evolution
 double rnd(void);                                                // Generate random number in [0,1]
 void findPerformance(double[][DATASIZE],double[],double[],char,int,int[][SWARMSIZE]);  // Find the current performance of the swarm
