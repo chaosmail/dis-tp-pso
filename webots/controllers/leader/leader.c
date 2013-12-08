@@ -29,8 +29,8 @@ WbDeviceTag emitter; // Webots Device: Emitter of the messages
 WbDeviceTag rec; // Webots Device: Handle for the receiver of particles
 
 double good_w[DATASIZE] = {-11.15, -16.93, -8.20, -18.11, -17.99, 8.55, -8.89, 3.52, 29.74,
-			     -7.48, 5.61, 11.16, -9.54, 4.58, 1.41, 2.09, 26.50, 23.11,
-			     -3.44, -3.78, 23.20, 8.41};
+                           -7.48, 5.61, 11.16, -9.54, 4.58, 1.41, 2.09, 26.50, 23.11,
+                           -3.44, -3.78, 23.20, 8.41};
 
 int braiten;
 
@@ -79,8 +79,8 @@ int main() {
 
         // Leader just moves ranomly
         speed = (int) (MAX_SPEED*rnd());
-        wb_differential_wheels_set_speed(speed,speed); 
- /*       // Wait for data
+        wb_differential_wheels_set_speed(speed,speed);
+        /*       // Wait for data
         while (receiver_get_queue_length(rec) == 0) {
             robot_step(64);
         }
@@ -99,11 +99,11 @@ int main() {
         }
 
         wb_receiver_next_packet(rec);
-   */ 
-   
-   robot_step(64);
-   }
-        
+   */
+
+        robot_step(64);
+    }
+
     return 0;
 }
 
@@ -192,7 +192,7 @@ double fitfunc(double weights[DATASIZE],int its) {
         // Add neural thresholds
         left_speed += weights[NB_SENSOR];
         right_speed += weights[2*NB_SENSOR+1];
-        // Apply neuron transform 
+        // Apply neuron transform
         left_speed = MAX_SPEED*(2.0*s(left_speed)-1.0);
         right_speed = MAX_SPEED*(2.0*s(right_speed)-1.0);
 
@@ -217,7 +217,7 @@ double fitfunc(double weights[DATASIZE],int its) {
         if (left_encoder>9000) wb_differential_wheels_set_encoders(0,right_encoder);
         if (right_encoder>1000) wb_differential_wheels_set_encoders(left_encoder,0);
         // Set the motor speeds
-        wb_differential_wheels_set_speed((int)left_speed,(int)right_speed); 
+        wb_differential_wheels_set_speed((int)left_speed,(int)right_speed);
         robot_step(128); // run one step
 
         // Get current fitness value

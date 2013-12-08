@@ -29,8 +29,8 @@ WbDeviceTag emitter; // Webots Device: Emitter of the messages
 WbDeviceTag rec; // Webots Device: Handle for the receiver of particles
 int braiten;
 double good_w[DATASIZE] = {-11.15, -16.93, -8.20, -18.11, -17.99, 8.55, -8.89, 3.52, 29.74,
-			     -7.48, 5.61, 11.16, -9.54, 4.58, 1.41, 2.09, 26.50, 23.11,
-			     -3.44, -3.78, 23.20, 8.41};
+                           -7.48, 5.61, 11.16, -9.54, 4.58, 1.41, 2.09, 26.50, 23.11,
+                           -3.44, -3.78, 23.20, 8.41};
 
 
 /********** Function declarations **********/
@@ -96,7 +96,7 @@ int main() {
 
             braiten = 1;
             fitfunc(good_w,100);
-        } 
+        }
         // Otherwise, run provided controller
         else {
 
@@ -105,8 +105,8 @@ int main() {
             // printf("Stopped evaluating fitness\n");
             
             buffer[0] = fit;
-            wb_emitter_send(emitter,(void *)buffer,sizeof(double)); //sends the fitness back to the controller. 
-        }   
+            wb_emitter_send(emitter,(void *)buffer,sizeof(double)); //sends the fitness back to the controller.
+        }
     }
 
     return 0;
@@ -215,7 +215,7 @@ double fitfunc(double weights[DATASIZE], int its) {
         // Add neural thresholds
         left_speed += weights[NB_SENSOR];
         right_speed += weights[2*NB_SENSOR+1];
-        // Apply neuron transform 
+        // Apply neuron transform
         left_speed = MAX_SPEED*(2.0*s(left_speed)-1.0);
         right_speed = MAX_SPEED*(2.0*s(right_speed)-1.0);
 
@@ -241,7 +241,7 @@ double fitfunc(double weights[DATASIZE], int its) {
         if (right_encoder>1000) wb_differential_wheels_set_encoders(left_encoder,0);
         
         // Set the motor speeds
-        wb_differential_wheels_set_speed((int)left_speed,(int)right_speed); 
+        wb_differential_wheels_set_speed((int)left_speed,(int)right_speed);
         robot_step(128); // run one step
 
         // Get current fitness value
@@ -249,7 +249,7 @@ double fitfunc(double weights[DATASIZE], int its) {
         /*// Average speed
         fit_speed += (fabs(left_speed) + fabs(right_speed))/(2.0*MAX_SPEED);
         // Difference in speed
-        fit_diff += fabs(left_speed - right_speed)/MAX_DIFF; 
+        fit_diff += fabs(left_speed - right_speed)/MAX_DIFF;
         // Sensor values
         for (i=0;i<NB_SENSOR;i++) {
             sens_val[i] += ds_value[i]/MAX_SENS;*/
@@ -257,16 +257,16 @@ double fitfunc(double weights[DATASIZE], int its) {
         /* Receive leader range, bearing and relative heading of leader */
         while (wb_receiver_get_queue_length(rec) > 0) {
             
-          rbbuffer = (float*) wb_receiver_get_data(rec);
+            rbbuffer = (float*) wb_receiver_get_data(rec);
 
-          // this data is received, it is totally different from the sent one
-          printf("x %.2f, z %.2f, phi %.2f\n",rbbuffer[0] , rbbuffer[1], rbbuffer[2]);
-          
-          new_leader_range = sqrt(rbbuffer[0]*rbbuffer[0] + rbbuffer[1]*rbbuffer[1]);
-          new_leader_bearing = -atan2(rbbuffer[0],rbbuffer[1]);
-          new_relative_heading = rbbuffer[2];
+            // this data is received, it is totally different from the sent one
+            printf("x %.2f, z %.2f, phi %.2f\n",rbbuffer[0] , rbbuffer[1], rbbuffer[2]);
 
-          wb_receiver_next_packet(rec);
+            new_leader_range = sqrt(rbbuffer[0]*rbbuffer[0] + rbbuffer[1]*rbbuffer[1]);
+            new_leader_bearing = -atan2(rbbuffer[0],rbbuffer[1]);
+            new_relative_heading = rbbuffer[2];
+
+            wb_receiver_next_packet(rec);
         }
 
         fit_range += new_leader_range;
