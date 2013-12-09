@@ -59,7 +59,7 @@ double new_rot[ROBOTS+1][4];
 
 // Initial Weights
 // Use -DBL_MAX to be randomly generated in PSO
-double initial_weight[DATASIZE] = {1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6};
+double initial_weight[DATASIZE] = {14.23, 12.78, 0, 0, 0, 0, -22.89, 3.74, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 // Initial Change of Weights
 // Use -DBL_MAX to be randomly generated in PSO
@@ -185,6 +185,7 @@ int main() {
 
             for (i = 0; i < DATASIZE; i++) {
                 bestw[i] = weights[i];
+                initial_weight[i]=weights[i]; // to send the best weights back into the next pso
             }
         }
 
@@ -262,7 +263,7 @@ void calc_fitness(double weights[ROBOTS][DATASIZE], double fit[ROBOTS], int its,
     double *rbuffer; //to get fitness from robots
     double global_x,global_z,rel_x,rel_z; //for localisation
     int i,j;
-    int cnt = 0;
+    int cnt = 1;
     int send_interval = 10;
 
     // printf("Iterations: %d\n", its);
@@ -330,7 +331,7 @@ void calc_fitness(double weights[ROBOTS][DATASIZE], double fit[ROBOTS], int its,
                 while (buffer_loc[2] < -M_PI) buffer_loc[2] += 2.0*M_PI;
 
                 // dont send each loop
-                if (cnt%send_interval == 5) {
+                if (cnt%send_interval == 0) {
 
                     // data is send
                     // printf("Robot %i: x %.2f, z %.2f, phi %.2f\n",i , buffer_loc[0] , buffer_loc[1], buffer_loc[2]);
@@ -361,6 +362,7 @@ void calc_fitness(double weights[ROBOTS][DATASIZE], double fit[ROBOTS], int its,
 
             rbuffer = (double *)wb_receiver_get_data(rec[i]);
             fit[i] += rbuffer[0];
+            //printf("received fitness: %0.2f\n",rbuffer[0]);
             wb_receiver_next_packet(rec[i]);
         }
 

@@ -94,7 +94,7 @@ int main() {
             for (j=0; j<DATASIZE+1; j++)
                 rbuffer[j] = rbufferPointer[j];
             
-            // printf("*received weights: %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f\n", rbufferPointer[0], rbufferPointer[1], rbufferPointer[2], rbufferPointer[3], rbufferPointer[4], rbufferPointer[5], rbufferPointer[6], rbufferPointer[7], rbufferPointer[DATASIZE]);
+             printf("*received weights: %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f\n", rbufferPointer[0], rbufferPointer[1], rbufferPointer[2], rbufferPointer[3], rbufferPointer[4], rbufferPointer[5], rbufferPointer[6], rbufferPointer[7], rbufferPointer[DATASIZE]);
             wb_receiver_next_packet(rec);
         }
 
@@ -213,21 +213,27 @@ double fitfunc(double weights[DATASIZE], int its) {
         // Feed proximity sensor values to neural net
         left_speed = 0.0;
         right_speed = 0.0;
-        for (i=0;i<NB_SENSOR;i++) {
+        /*for (i=0;i<NB_SENSOR;i++) {
             left_speed += weights[i]*ds_value[i];
             right_speed += weights[i+NB_SENSOR+1]*ds_value[i];
-        }
+        }*/
+        
+        //only use sensors 0,1,6,7 and use symmetry
+        left_speed = weights[0]*ds_value[0]+weights[1]*ds_value[1]+weights[6]*ds_value[6]+weights[7]*ds_value[7];
+        right_speed = weights[0]*ds_value[7]+weights[1]*ds_value[6]+weights[6]*ds_value[1]+weights[7]*ds_value[0];
+        
+        
         left_speed /= 200.0;
         right_speed /= 200.0;
 
-        // Add the recursive connections
+        /*// Add the recursive connections
         left_speed += weights[2*NB_SENSOR+2]*(old_left+MAX_SPEED)/(2*MAX_SPEED);
         left_speed += weights[2*NB_SENSOR+3]*(old_right+MAX_SPEED)/(2*MAX_SPEED);
         right_speed += weights[2*NB_SENSOR+4]*(old_left+MAX_SPEED)/(2*MAX_SPEED);
         right_speed += weights[2*NB_SENSOR+5]*(old_right+MAX_SPEED)/(2*MAX_SPEED);
         // Add neural thresholds
         left_speed += weights[NB_SENSOR];
-        right_speed += weights[2*NB_SENSOR+1];
+        right_speed += weights[2*NB_SENSOR+1];*/
         // Apply neuron transform
         left_speed = MAX_SPEED*(2.0*s(left_speed)-1.0);
         right_speed = MAX_SPEED*(2.0*s(right_speed)-1.0);
@@ -316,7 +322,8 @@ double fitfunc(double weights[DATASIZE], int its) {
         fitness = 1/(A*fit_range+B*fabs(fit_bearing)+C*fabs(fit_relative_heading));
     }
 
-    printf("fitness %.2f = range %.2f, bearing %.2f, heading %.2f\n", fitness, fit_range, fit_bearing, fit_relative_heading);
+    //printf("fitness: %.2f \n", fitness);
+    //printf("fitness %.2f = range %.2f, bearing %.2f, heading %.2f\n", fitness, fit_range, fit_bearing, fit_relative_heading);
     return fitness;
 }
 

@@ -34,8 +34,7 @@ int braiten;
 
 //double fitfunc(double[],int);
 double rnd();
-
-
+double gauss();
 /********** Function implementations **********/
 
 void reset(void) {
@@ -73,11 +72,13 @@ int main() {
     while (1) {
 
         // Leader just moves ranomly
-        speedl = (int) (MAX_SPEED*rnd());
-        speedr = (int) (MAX_SPEED*rnd());
+        speedl = (int) (MAX_SPEED*fabs(gauss()));
+        speedr = (int) (MAX_SPEED*fabs(gauss()));
+        /*speedl = (int) (MAX_SPEED*rand());
+        speedr = (int) (MAX_SPEED*rand());*/
         wb_differential_wheels_set_speed(speedl,speedr);
 
-        robot_step(64);
+        robot_step(20*64);
     }
 
     return 0;
