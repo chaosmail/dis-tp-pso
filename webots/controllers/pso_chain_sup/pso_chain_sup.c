@@ -17,7 +17,7 @@
 #define NB_SENSOR 8                     // Number of proximity sensors
 
 /* PSO definitions */
-#define SWARMSIZE 12                    // Number of particles in swarm
+#define SWARMSIZE 10                    // Number of particles in swarm
 #define NB 1                            // Number of neighbors on each side
 #define LWEIGHT 2.0                     // Weight of attraction to personal best
 #define NBWEIGHT 2.0                    // Weight of attraction to neighborhood best
@@ -333,7 +333,7 @@ void calc_fitness(double weights[ROBOTS][DATASIZE], double fit[ROBOTS], int its,
                 if (cnt%send_interval == 5) {
 
                     // data is send
-                    /printf("Robot %i: x %.2f, z %.2f, phi %.2f\n",i , buffer_loc[0] , buffer_loc[1], buffer_loc[2]);
+                    printf("Robot %i: x %.2f, z %.2f, phi %.2f\n",i , buffer_loc[0] , buffer_loc[1], buffer_loc[2]);
 
                     // send relative leaders positions to follower
                     wb_emitter_send(emitter[i],(char *)buffer_loc,3*sizeof(double));
