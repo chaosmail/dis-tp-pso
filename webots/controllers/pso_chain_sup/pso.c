@@ -93,10 +93,12 @@ double* pso(int n_swarmsize, int n_nb, double lweight, double nbweight, double v
 
             if (initial_weight[j] != -DBL_MAX) {
                 // assign initial value
+                // printf("use intial value%.2f\n",initial_weight[j]);
                 swarm[i][j] = initial_weight[j];
             }
             else {
                 // Randomly assign different initial values in [min,max]
+                // printf("use random value\n");
                 swarm[i][j] = (max-min)*rnd()+min;
             }
 

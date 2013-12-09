@@ -54,8 +54,6 @@ void reset(void) {
 
 int main() {
 
-    double buffer[255];
-    double *rbuffer;
     double fit;
     int i;
 

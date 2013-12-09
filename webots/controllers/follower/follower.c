@@ -62,9 +62,10 @@ void reset(void) {
 int main() {
 
     double buffer[255];
-    double *rbuffer;
+    double *rbufferPointer;
+    double rbuffer[DATASIZE+1];
     double fit;
-    int i;
+    int i, j;
 
     wb_robot_init();
     reset();
@@ -87,9 +88,17 @@ int main() {
 
         // Read as long as data is available
         while (receiver_get_queue_length(rec) > 0) {
-            rbuffer = (double *)wb_receiver_get_data(rec);
+
+            rbufferPointer = (double *)wb_receiver_get_data(rec);
+            
+            for (j=0; j<DATASIZE+1; j++)
+                rbuffer[j] = rbufferPointer[j];
+            
+            // printf("*received weights: %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f\n", rbufferPointer[0], rbufferPointer[1], rbufferPointer[2], rbufferPointer[3], rbufferPointer[4], rbufferPointer[5], rbufferPointer[6], rbufferPointer[7], rbufferPointer[DATASIZE]);
             wb_receiver_next_packet(rec);
         }
+
+        // printf("received weights: %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f\n", rbuffer[0], rbuffer[1], rbuffer[2], rbuffer[3], rbuffer[4], rbuffer[5], rbuffer[6], rbuffer[7], rbuffer[DATASIZE]);
 
         // Check for pre-programmed avoidance behavior
         // We need this in the epuck when PSO is done
@@ -166,7 +175,7 @@ double fitfunc(double weights[DATASIZE], int its) {
     double fit_bearing;          //bearing aspect of fitness
     double fit_relative_heading; //relative heading aspect of fitness
     double new_leader_range, new_leader_bearing, new_relative_heading; // received leader range and bearing and relative heading
-    float *rbbuffer;                  // buffer for the range and bearin
+    double *rbbuffer;                  // buffer for the range and bearin
     double sens_val[NB_SENSOR]; // Average values for each proximity sensor
     double fitness;             // Fitness of controller
 
@@ -197,6 +206,9 @@ double fitfunc(double weights[DATASIZE], int its) {
         ds_value[5] = (double) wb_distance_sensor_get_value(ds[5]);
         ds_value[6] = (double) wb_distance_sensor_get_value(ds[6]);
         ds_value[7] = (double) wb_distance_sensor_get_value(ds[7]);
+
+        // Weights for the follower controller
+        // printf("my weights: %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f\n", weights[0], weights[1], weights[2], weights[3], weights[4], weights[5], weights[6], weights[7]);
 
         // Feed proximity sensor values to neural net
         left_speed = 0.0;
@@ -258,10 +270,10 @@ double fitfunc(double weights[DATASIZE], int its) {
         /* Receive leader range, bearing and relative heading of leader */
         while (wb_receiver_get_queue_length(rec) > 0) {
             
-            rbbuffer = (float*) wb_receiver_get_data(rec);
+            rbbuffer = (double *)wb_receiver_get_data(rec);
 
-            // this data is received, it is totally different from the sent one
-            printf("x %.2f, z %.2f, phi %.2f\n",rbbuffer[0] , rbbuffer[1], rbbuffer[2]);
+            // this data is received
+            // printf("x %.2f, z %.2f, phi %.2f\n",rbbuffer[0] , rbbuffer[1], rbbuffer[2]);
 
             new_leader_range = sqrt(rbbuffer[0]*rbbuffer[0] + rbbuffer[1]*rbbuffer[1]);
             new_leader_bearing = -atan2(rbbuffer[0],rbbuffer[1]);
@@ -291,7 +303,11 @@ double fitfunc(double weights[DATASIZE], int its) {
     int A=1; //importance coefficient of range
     int B=1; //importance coefficient of bearing
     int C=1; //importance coefficient of relative heading
-    fitness = 1/(A*fit_range+B*fit_bearing+C*fit_relative_heading);
+    
+    // What about negative fitness?
+    // shouldnt we calculate just positive ones?
+    fitness = 1/(A*fit_range+B*fabs(fit_bearing)+C*fabs(fit_relative_heading));
+    
     printf("fitness %.2f = range %.2f, bearing %.2f, heading %.2f\n", fitness, fit_range, fit_bearing, fit_relative_heading);
     return fitness;
 }

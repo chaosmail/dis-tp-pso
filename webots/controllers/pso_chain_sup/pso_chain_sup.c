@@ -17,7 +17,7 @@
 #define NB_SENSOR 8                     // Number of proximity sensors
 
 /* PSO definitions */
-#define SWARMSIZE 10                    // Number of particles in swarm
+#define SWARMSIZE 12                    // Number of particles in swarm
 #define NB 1                            // Number of neighbors on each side
 #define LWEIGHT 2.0                     // Weight of attraction to personal best
 #define NBWEIGHT 2.0                    // Weight of attraction to neighborhood best
@@ -59,9 +59,7 @@ double new_rot[ROBOTS+1][4];
 
 // Initial Weights
 // Use -DBL_MAX to be randomly generated in PSO
-double initial_weight[DATASIZE] = {-11.15, -16.93, -8.20, -18.11, -17.99, 8.55, -8.89, 3.52, 29.74,
-                           -7.48, 5.61, 11.16, -9.54, 4.58, 1.41, 2.09, 26.50, 23.11,
-                           -3.44, -3.78, 23.20, 8.41};
+double initial_weight[DATASIZE] = {1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6};
 
 // Initial Change of Weights
 // Use -DBL_MAX to be randomly generated in PSO
@@ -259,23 +257,26 @@ void reset_pos(int rob_id) {
 // Distribute fitness functions among robots
 void calc_fitness(double weights[ROBOTS][DATASIZE], double fit[ROBOTS], int its, int numRobs) {
 
-    double buffer[255];// to send particles to robots
+    double buffer[DATASIZE+1];// to send particles to robots
     double buffer_loc[255];//to send positions to robot
     double *rbuffer; //to get fitness from robots
     double global_x,global_z,rel_x,rel_z; //for localisation
-    int i,j,k;
+    int i,j;
     int cnt = 0;
     int send_interval = 10;
 
-    for(k=0;k<ROBOTS;k++){  //WATCH OUT this sends the same weight k to all the robots->homogenous
+    // printf("Iterations: %d\n", its);
 
-        // Send data to robots */
-        fit[k]=0;
+    // for(k=0;k<ROBOTS;k++){  //WATCH OUT this sends the same weight k to all the robots->homogenous
 
-        //send data to followers 0,1,2
+        //send weights to followers 0,1,2
         for (i=0;i<numRobs;i++) {
 
-            reset_pos(i); //puts robots back to initial chain position
+            // reset fitness value
+            fit[i]=0;
+
+            //put robot back to initial chain position
+            reset_pos(i);
 
             if (i==2){
                 //resets also leader
@@ -283,10 +284,12 @@ void calc_fitness(double weights[ROBOTS][DATASIZE], double fit[ROBOTS], int its,
             }
 
             for (j=0;j<DATASIZE;j++) {
-                buffer[j] = weights[k][j];
+                buffer[j] = weights[i][j];
             }
 
-            buffer[DATASIZE] = its;
+            buffer[DATASIZE] = (double) its;
+
+            // printf("Use these weights: %.1f %.1f %.1f %.1f %.1f %.1f %.1f %.1f %.1f\n", buffer[0], buffer[1], buffer[2] ,buffer[3], buffer[4], buffer[5], buffer[6], buffer[7], buffer[DATASIZE]);
 
             wb_emitter_send(emitter[i],(void *)buffer,(DATASIZE+1)*sizeof(double));
             // printf("%f %f %f %f %f\n",buffer[0],buffer[1],buffer[2],buffer[3],buffer[4]);
@@ -309,7 +312,7 @@ void calc_fitness(double weights[ROBOTS][DATASIZE], double fit[ROBOTS], int its,
                 loc[i][2] = wb_supervisor_field_get_sf_vec3f(robs_translation[i])[2];
                 loc[i][3] = wb_supervisor_field_get_sf_rotation(robs_rotation[i])[3];
                 
-                printf("Robot %i heading: %.2f", i , loc[i][3]);
+                //printf("Robot %i heading: %.2f\n", i , loc[i][3]);
                 //printf("Robot %i y: %.2f", i , loc[i][1]);
                 
                 // Find global relative coordinates
@@ -326,12 +329,16 @@ void calc_fitness(double weights[ROBOTS][DATASIZE], double fit[ROBOTS], int its,
                 while (buffer_loc[2] > M_PI) buffer_loc[2] -= 2.0*M_PI;
                 while (buffer_loc[2] < -M_PI) buffer_loc[2] += 2.0*M_PI;
 
+                // dont send each loop
                 if (cnt%send_interval == 5) {
 
-                    // data is send, it seems to be correct
-                    printf("Robot %i: x %.2f, z %.2f, phi %.2f\n",i , buffer_loc[0] , buffer_loc[1], buffer_loc[2]);
+                    // data is send
+                    /printf("Robot %i: x %.2f, z %.2f, phi %.2f\n",i , buffer_loc[0] , buffer_loc[1], buffer_loc[2]);
 
-                    wb_emitter_send(emitter[i],(char *)buffer_loc,3*sizeof(float));
+                    // send relative leaders positions to follower
+                    wb_emitter_send(emitter[i],(char *)buffer_loc,3*sizeof(double));
+                    
+                    // Reset the count var
                     cnt = 0;
                 }
 
@@ -353,18 +360,20 @@ void calc_fitness(double weights[ROBOTS][DATASIZE], double fit[ROBOTS], int its,
         for (i=0;i<numRobs;i++) {
 
             rbuffer = (double *)wb_receiver_get_data(rec[i]);
-            fit[k] += rbuffer[0];
+            fit[i] += rbuffer[0];
             wb_receiver_next_packet(rec[i]);
         }
 
-        fit[k]/=ROBOTS;
-    }
+        //fit[k]/=ROBOTS;
+    //}
 }
 
 // Evolution fitness function
 // This function is called in file pso.c in function findPerformance()
 void fitness(double weights[ROBOTS][DATASIZE], double fit[ROBOTS], int neighbors[SWARMSIZE][SWARMSIZE]) {
     int i,j;
+
+    // printf("Use these weights: %.1f %.1f %.1f %.1f %.1f %.1f %.1f %.1f\n", weights[0][0], weights[0][1], weights[0][2] ,weights[0][3], weights[0][4], weights[0][5], weights[0][6], weights[0][7]);
 
     calc_fitness(weights,fit,FIT_ITS,ROBOTS);
 
