@@ -306,8 +306,16 @@ double fitfunc(double weights[DATASIZE], int its) {
     
     // What about negative fitness?
     // shouldnt we calculate just positive ones?
-    fitness = 1/(A*fit_range+B*fabs(fit_bearing)+C*fabs(fit_relative_heading));
-    
+    double tmpVal = A*fit_range + B*fabs(fit_bearing) + C*fabs(fit_relative_heading);
+
+    if (tmpVal == 0) {
+        fitness = 100;
+        printf("All zero\n");
+    }
+    else {
+        fitness = 1/(A*fit_range+B*fabs(fit_bearing)+C*fabs(fit_relative_heading));
+    }
+
     printf("fitness %.2f = range %.2f, bearing %.2f, heading %.2f\n", fitness, fit_range, fit_bearing, fit_relative_heading);
     return fitness;
 }
