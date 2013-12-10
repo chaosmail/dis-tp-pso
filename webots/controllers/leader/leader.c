@@ -73,22 +73,57 @@ int main() {
     int speedr = 0;
     int oldSpeedl = 0;
     int oldSpeedr = 0;
+    
+    int length = 60;
+    printf("length: %i \n", length);
+    int counter = 0;
+    int trajl[60] = {6, 6, 6, 6, 6, 
+                         6, 6, 6, 6, 6,
+                         6, 6, 6, 6, 6, 
+                         6, 6, 6, 6, 6,
+                         8, 8, 8, 8, 8, 
+                         8, 8, 8, 8, 8, 
+                         8, 8, 8, 8, 8, 
+                         8, 8, 8, 8, 8, 
+                         4, 4, 4, 4, 4, 
+                         4, 4, 4, 4, 4, 
+                         4, 4, 4, 4, 4,
+                         4, 4, 4, 4, 4};
+                     
+    int trajr[60] = {6, 6, 6, 6, 6, 
+                         6, 6, 6, 6, 6,
+                         6, 6, 6, 6, 6, 
+                         6, 6, 6, 6, 6,
+                         4, 4, 4, 4, 4, 
+                         4, 4, 4, 4, 4,
+                         4, 4, 4, 4, 4, 
+                         4, 4, 4, 4, 4,
+                         8, 8, 8, 8, 8, 
+                         8, 8, 8, 8, 8,
+                         8, 8, 8, 8, 8,
+                         8, 8, 8, 8, 8};
+    
 
     robot_step(64);
     while (1) {
 
-        oldSpeedl = speedl;
-        oldSpeedr = speedr;
+        //oldSpeedl = speedl;
+        //oldSpeedr = speedr;
 
         // Leader just moves ranomly
         // weighted movement
-        speedl = (int) ((MAX_SPEED*unf(0.5,1))*4 + oldSpeedl*6)/10;
-        speedr = (int) ((MAX_SPEED*unf(0.5,1))*4 + oldSpeedr*6)/10;
+        //speedl = (int) ((MAX_SPEED*unf(0.5,1))*4 + oldSpeedl*6)/10;
+        //speedr = (int) ((MAX_SPEED*unf(0.5,1))*4 + oldSpeedr*6)/10;
         /*speedl = (int) (MAX_SPEED*rand());
         speedr = (int) (MAX_SPEED*rand());*/
-        wb_differential_wheels_set_speed(speedl,speedr);
-
-        robot_step(20*64);
+        
+        //wb_differential_wheels_set_speed(speedl,speedr);
+        wb_differential_wheels_set_speed(150*trajl[counter%length],150*trajr[counter%length]);
+        
+        printf("counter: %i \n", counter);
+        
+        counter++;
+        robot_step(64);
     }
 
     return 0;
