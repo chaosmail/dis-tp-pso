@@ -14,7 +14,8 @@
 #define ROB_RAD 0.035
 #define ARENA_SIZE 1.89
 
-#define NB_SENSOR 8                     // Number of proximity sensors
+#define NB_ALL_SENSOR 8 // Number of all proximity sensors
+#define NB_SENSOR 6 // Number of used proximity sensors
 
 /* PSO definitions */
 #define SWARMSIZE 10                    // Number of particles in swarm
@@ -25,7 +26,7 @@
 #define MININIT -20.0                   // Lower bound on initialization value
 #define MAXINIT 20.0                    // Upper bound on initialization value
 #define ITS 20                          // Number of iterations to run
-#define DATASIZE 2*NB_SENSOR+6          // Number of elements in particle
+#define DATASIZE NB_SENSOR+6          // Number of elements in particle
 
 /* Neighborhood types */
 #define STANDARD    -1
@@ -59,13 +60,14 @@ double new_rot[ROBOTS+1][4];
 
 // Initial Weights
 // Use -DBL_MAX to be randomly generated in PSO
-double initial_weight[DATASIZE] = {14.23, 12.78, 0, 0, 0, 0, -22.89, 3.74, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+//double initial_weight[DATASIZE] = { 0, -2, -1,  0, 1, 2, 0, 0, 0, 0, 0, 0 };
+double initial_weight[DATASIZE] = { 8.97, -0.98, 0.77, 2.88, 5.43, -2.16, -3.77, -3.03, -2.05, -2.54, 0.61, -1.33 };
 
 // Initial Change of Weights
 // Use -DBL_MAX to be randomly generated in PSO
-double initial_pso_velocity[DATASIZE] = {-DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX,
-                                  -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX,
+double initial_pso_velocity[DATASIZE] = { -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX,
                                   -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX};
+
 
 /********** Function declarations **********/
 
@@ -170,7 +172,7 @@ int main() {
 
             for (k=0;k<MAX_ROB && i+k<FINALRUNS;k++) {
 
-                printf(" %f",f[k]);
+                // printf("Fitness: %f\n",f[k]);
 
                 fitvals[i+k] = f[k];
                 fit += f[k];
@@ -201,6 +203,19 @@ int main() {
 
     buffer[DATASIZE] = 1000000;
 
+    // Print out the best results
+    printf("***Best weights:\n");
+
+    for (j=0;j<DATASIZE;j++) {
+        if (j == DATASIZE-1)
+            printf("%.2f };\n",bestw[j]);
+        else if (j == 0)
+            printf("double initial_weight[DATASIZE] = { %.2f, ",bestw[j]);
+        else
+            printf("%.2f, ",bestw[j]);
+    }
+    
+    
     for (i=0;i<ROBOTS;i++) {
         wb_emitter_send(emitter[i],(void *)buffer,(DATASIZE+1)*sizeof(double));
     }
@@ -361,7 +376,14 @@ void calc_fitness(double weights[ROBOTS][DATASIZE], double fit[ROBOTS], int its,
         for (i=0;i<numRobs;i++) {
 
             rbuffer = (double *)wb_receiver_get_data(rec[i]);
-            fit[i] += rbuffer[0];
+            
+            if (i==2) {
+                fit[i] += rbuffer[0]*ROBOTS;
+            }
+            else {
+                fit[i] += rbuffer[0];
+            }
+
             //printf("received fitness: %0.2f\n",rbuffer[0]);
             wb_receiver_next_packet(rec[i]);
         }

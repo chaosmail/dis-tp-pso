@@ -7,8 +7,9 @@
 /*                                                */
 /**************************************************/
 
-#define NB_SENSOR 8
-#define DATASIZE 2*NB_SENSOR+6
+#define NB_ALL_SENSOR 8 // Number of all proximity sensors
+#define NB_SENSOR 6 // Number of used proximity sensors
+#define DATASIZE NB_SENSOR+6
 #define SWARMSIZE 10 
 
 // Functions

@@ -7,7 +7,7 @@
 /*                                                */
 /**************************************************/
 
-#define VERBOSE 1
+#define VERBOSE 0
 
 #include <stdio.h>
 #include <float.h>

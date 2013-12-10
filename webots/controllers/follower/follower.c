@@ -13,9 +13,10 @@
 
 #define MAX_SPEED 1000.0 // Maximum speed of wheels in each direction
 #define MAX_ACC 1000.0 // Maximum amount speed can change in 128 ms
-#define NB_SENSOR 8 // Number of proximity sensors
+#define NB_ALL_SENSOR 8 // Number of all proximity sensors
+#define NB_SENSOR 6 // Number of used proximity sensors
 
-#define DATASIZE 2*NB_SENSOR+6 // Number of elements in particle
+#define DATASIZE NB_SENSOR+6 // Number of elements in particle
 
 // Fitness definitions
 #define MAX_DIFF (2*MAX_SPEED) // Maximum difference between wheel speeds
@@ -24,13 +25,13 @@
 
 /********** Global vars **********/
 
-WbDeviceTag ds[NB_SENSOR]; // Webots Device: Sensors
+WbDeviceTag ds[NB_ALL_SENSOR]; // Webots Device: Sensors
 WbDeviceTag emitter; // Webots Device: Emitter of the messages
 WbDeviceTag rec; // Webots Device: Handle for the receiver of particles
 int braiten;
-double good_w[DATASIZE] = {-11.15, -16.93, -8.20, -18.11, -17.99, 8.55, -8.89, 3.52, 29.74,
-                           -7.48, 5.61, 11.16, -9.54, 4.58, 1.41, 2.09, 26.50, 23.11,
-                           -3.44, -3.78, 23.20, 8.41};
+//double good_w[DATASIZE] = {-11.15, -16.93, -8.20, -18.11, -17.99, 8.55, -8.89, 3.52, 29.74,
+//                           -7.48, 5.61, 11.16, -9.54, 4.58, 1.41, 2.09, 26.50, 23.11,
+//                           -3.44, -3.78, 23.20, 8.41};
 
 
 /********** Function declarations **********/
@@ -49,7 +50,7 @@ void reset(void) {
     text[1]='s';
     text[3]='\0';
     
-    for (i=0;i<NB_SENSOR;i++) {
+    for (i=0;i<NB_ALL_SENSOR;i++) {
         text[0]='p';
         text[2]='0'+i;
         ds[i] = wb_robot_get_device(text); // distance sensors
@@ -69,7 +70,7 @@ int main() {
 
     wb_robot_init();
     reset();
-    for(i=0;i<NB_SENSOR;i++) {
+    for(i=0;i<NB_ALL_SENSOR;i++) {
         distance_sensor_enable(ds[i],64);
     }
     
@@ -94,21 +95,21 @@ int main() {
             for (j=0; j<DATASIZE+1; j++)
                 rbuffer[j] = rbufferPointer[j];
             
-             printf("*received weights: %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f\n", rbufferPointer[0], rbufferPointer[1], rbufferPointer[2], rbufferPointer[3], rbufferPointer[4], rbufferPointer[5], rbufferPointer[6], rbufferPointer[7], rbufferPointer[DATASIZE]);
+            // printf("*received weights: %.2f %.2f %.2f %.2f %.2f %.2f %.2f\n", rbufferPointer[0], rbufferPointer[1], rbufferPointer[2], rbufferPointer[3], rbufferPointer[4], rbufferPointer[5], rbufferPointer[DATASIZE]);
             wb_receiver_next_packet(rec);
         }
 
-        // printf("received weights: %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f\n", rbuffer[0], rbuffer[1], rbuffer[2], rbuffer[3], rbuffer[4], rbuffer[5], rbuffer[6], rbuffer[7], rbuffer[DATASIZE]);
+        // printf("received weights: %.2f %.2f %.2f %.2f %.2f %.2f %.2f\n", rbuffer[0], rbuffer[1], rbuffer[2], rbuffer[3], rbuffer[4], rbuffer[5], rbuffer[DATASIZE]);
 
         // Check for pre-programmed avoidance behavior
         // We need this in the epuck when PSO is done
-        if (rbuffer[DATASIZE] == -1.0) {
+        /*if (rbuffer[DATASIZE] == -1.0) {
 
             braiten = 1;
             fitfunc(good_w,100);
-        }
+        }*/
         // Otherwise, run provided controller
-        else {
+        //else {
 
             // printf("Start evaluating fitness\n");
             fit = fitfunc(rbuffer,rbuffer[DATASIZE]); //evaluates fitness of the received particle
@@ -116,7 +117,7 @@ int main() {
             
             buffer[0] = fit;
             wb_emitter_send(emitter,(void *)buffer,sizeof(double)); //sends the fitness back to the controller.
-        }
+        //}
     }
 
     return 0;
@@ -157,13 +158,13 @@ double fitfunc(double weights[DATASIZE], int its) {
     double left_speed,right_speed; // Wheel speeds
     double old_left, old_right; // Previous wheel speeds (for recursion)
     int left_encoder,right_encoder;
-    double ds_value[NB_SENSOR];
+    double ds_value[NB_ALL_SENSOR];
     int i,j; // Loop vars
 
     // Print the received weights
     /*printf("%d iterations with ",its);
     for (i=0; i<DATASIZE; i++) {
-        printf(" %.2f",weights[DATASIZE]);
+        printf(" %.2f",weights[i]);
     }
     printf("\n");*/
 
@@ -176,7 +177,7 @@ double fitfunc(double weights[DATASIZE], int its) {
     double fit_relative_heading; //relative heading aspect of fitness
     double new_leader_range, new_leader_bearing, new_relative_heading; // received leader range and bearing and relative heading
     double *rbbuffer;                  // buffer for the range and bearin
-    double sens_val[NB_SENSOR]; // Average values for each proximity sensor
+    double sens_val[NB_ALL_SENSOR]; // Average values for each proximity sensor
     double fitness;             // Fitness of controller
 
     // Initially no fitness measurements
@@ -186,7 +187,7 @@ double fitfunc(double weights[DATASIZE], int its) {
     fit_bearing=0.0;
     fit_relative_heading=0.0;
 
-    for (i=0;i<NB_SENSOR;i++) {
+    for (i=0;i<NB_ALL_SENSOR;i++) {
         sens_val[i] = 0.0;
     }
     //fit_sens = 0.0;
@@ -219,21 +220,36 @@ double fitfunc(double weights[DATASIZE], int its) {
         }*/
         
         //only use sensors 0,1,6,7 and use symmetry
-        left_speed = weights[0]*ds_value[0]+weights[1]*ds_value[1]+weights[6]*ds_value[6]+weights[7]*ds_value[7];
-        right_speed = weights[0]*ds_value[7]+weights[1]*ds_value[6]+weights[6]*ds_value[1]+weights[7]*ds_value[0];
+        //left_speed = weights[0]*ds_value[0]+weights[1]*ds_value[1]+weights[6]*ds_value[6]+weights[7]*ds_value[7];
+        //right_speed = weights[0]*ds_value[7]+weights[1]*ds_value[6]+weights[6]*ds_value[1]+weights[7]*ds_value[0];
         
-        
+        // We use IR0, IR1, IR2, IR5, IR6, IR7
+        // We use 6 symmetric weights
+        // we have these weights
+        // 0 1 2 3 4 5
+        // corresponding to these IRs
+        // 0 1 2 5 6 7 for LEFT
+        // 7 6 5 2 1 0 for RIGHT
+        left_speed  = weights[0]*ds_value[0] + weights[1]*ds_value[1] + weights[2]*ds_value[2] + weights[3]*ds_value[5] + weights[4]*ds_value[6] + weights[5]*ds_value[7];
+        right_speed = weights[0]*ds_value[7] + weights[1]*ds_value[6] + weights[2]*ds_value[5] + weights[3]*ds_value[2] + weights[4]*ds_value[1] + weights[5]*ds_value[0];
+
+        // printf("l:%.2f r:%.2f\n", left_speed, right_speed);
+
         left_speed /= 200.0;
         right_speed /= 200.0;
 
-        /*// Add the recursive connections
-        left_speed += weights[2*NB_SENSOR+2]*(old_left+MAX_SPEED)/(2*MAX_SPEED);
-        left_speed += weights[2*NB_SENSOR+3]*(old_right+MAX_SPEED)/(2*MAX_SPEED);
-        right_speed += weights[2*NB_SENSOR+4]*(old_left+MAX_SPEED)/(2*MAX_SPEED);
-        right_speed += weights[2*NB_SENSOR+5]*(old_right+MAX_SPEED)/(2*MAX_SPEED);
+        // Recursive connections
+        left_speed += weights[NB_SENSOR+2]*(old_left+MAX_SPEED)/(2*MAX_SPEED);
+        left_speed += weights[NB_SENSOR+3]*(old_right+MAX_SPEED)/(2*MAX_SPEED);
+        right_speed += weights[NB_SENSOR+4]*(old_left+MAX_SPEED)/(2*MAX_SPEED);
+        right_speed += weights[NB_SENSOR+5]*(old_right+MAX_SPEED)/(2*MAX_SPEED);
+
+        
         // Add neural thresholds
         left_speed += weights[NB_SENSOR];
-        right_speed += weights[2*NB_SENSOR+1];*/
+        right_speed += weights[NB_SENSOR+1];
+        
+
         // Apply neuron transform
         left_speed = MAX_SPEED*(2.0*s(left_speed)-1.0);
         right_speed = MAX_SPEED*(2.0*s(right_speed)-1.0);
@@ -244,13 +260,14 @@ double fitfunc(double weights[DATASIZE], int its) {
         if (right_speed - old_right > MAX_ACC) left_speed = old_right+MAX_ACC;
         if (right_speed - old_right < -MAX_ACC) left_speed = old_right-MAX_ACC;
         
+        // printf("l:%.2f r:%.2f\n", left_speed, right_speed);
+        
         // Make sure speeds are within bounds
         if (left_speed > MAX_SPEED) left_speed = MAX_SPEED;
         if (left_speed < -1.0*MAX_SPEED) left_speed = -1.0*MAX_SPEED;
         if (right_speed > MAX_SPEED) right_speed = MAX_SPEED;
-        if (right_speed < -1.0*MAX_SPEED) right_speed = -1.0*MAX_SPEED;
-
-        // Set new old speeds
+        if (right_speed < -1.0*MAX_SPEED) right_speed = -1.0*MAX_SPEED;// Set new old speeds
+        
         old_left = left_speed;
         old_right = right_speed;
 
