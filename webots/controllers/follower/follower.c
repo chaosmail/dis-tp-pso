@@ -16,7 +16,7 @@
 #define NB_ALL_SENSOR 8 // Number of all proximity sensors
 #define NB_SENSOR 6 // Number of used proximity sensors
 
-#define DATASIZE NB_SENSOR+6 // Number of elements in particle
+#define DATASIZE NB_SENSOR+3 // Number of elements in particle
 
 // Fitness definitions
 #define MAX_DIFF (2*MAX_SPEED) // Maximum difference between wheel speeds
@@ -152,6 +152,31 @@ double s(double v) {
         return 1.0/(1.0 + exp(-1*v));
 }
 
+// Map the nonlinear sensor values to linear distances
+double getRealDistance(double x) {
+
+    double a = 3766;
+    double b = -2.012;
+    double offset = 30;
+
+    return a*exp(b*x) + offset;    
+}
+
+// Map the Value*Weights to Speed
+double getRealSpeed(double val){
+
+    double convVal = 0;
+
+    if (val > 20)
+        convVal = 1;
+    else if (val < -20)
+        convVal = -1;
+    else if (val != 0) 
+        convVal = val/20;
+
+    return MAX_SPEED*convVal;
+}
+
 // Find the fitness for obstacle avoidance of the passed controller
 double fitfunc(double weights[DATASIZE], int its) {
     
@@ -179,6 +204,7 @@ double fitfunc(double weights[DATASIZE], int its) {
     double *rbbuffer;                  // buffer for the range and bearin
     double sens_val[NB_ALL_SENSOR]; // Average values for each proximity sensor
     double fitness;             // Fitness of controller
+    double penalty = 0;         // Penalize Fitness value
 
     // Initially no fitness measurements
     /*fit_speed = 0.0;
@@ -199,14 +225,14 @@ double fitfunc(double weights[DATASIZE], int its) {
         
         if (braiten) j--;            // Loop forever
 
-        ds_value[0] = (double) wb_distance_sensor_get_value(ds[0]);
-        ds_value[1] = (double) wb_distance_sensor_get_value(ds[1]);
-        ds_value[2] = (double) wb_distance_sensor_get_value(ds[2]);
-        ds_value[3] = (double) wb_distance_sensor_get_value(ds[3]);
-        ds_value[4] = (double) wb_distance_sensor_get_value(ds[4]);
-        ds_value[5] = (double) wb_distance_sensor_get_value(ds[5]);
-        ds_value[6] = (double) wb_distance_sensor_get_value(ds[6]);
-        ds_value[7] = (double) wb_distance_sensor_get_value(ds[7]);
+        ds_value[0] = getRealDistance((double) wb_distance_sensor_get_value(ds[0]));
+        ds_value[1] = getRealDistance((double) wb_distance_sensor_get_value(ds[1]));
+        ds_value[2] = getRealDistance((double) wb_distance_sensor_get_value(ds[2]));
+        ds_value[3] = 0;//getRealDistance((double) wb_distance_sensor_get_value(ds[3]));
+        ds_value[4] = 0;//getRealDistance((double) wb_distance_sensor_get_value(ds[4]));
+        ds_value[5] = getRealDistance((double) wb_distance_sensor_get_value(ds[5]));
+        ds_value[6] = getRealDistance((double) wb_distance_sensor_get_value(ds[6]));
+        ds_value[7] = getRealDistance((double) wb_distance_sensor_get_value(ds[7]));
 
         // Weights for the follower controller
         // printf("my weights: %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f\n", weights[0], weights[1], weights[2], weights[3], weights[4], weights[5], weights[6], weights[7]);
@@ -239,20 +265,35 @@ double fitfunc(double weights[DATASIZE], int its) {
         right_speed /= 200.0;
 
         // Recursive connections
-        left_speed += weights[NB_SENSOR+2]*(old_left+MAX_SPEED)/(2*MAX_SPEED);
-        left_speed += weights[NB_SENSOR+3]*(old_right+MAX_SPEED)/(2*MAX_SPEED);
-        right_speed += weights[NB_SENSOR+4]*(old_left+MAX_SPEED)/(2*MAX_SPEED);
-        right_speed += weights[NB_SENSOR+5]*(old_right+MAX_SPEED)/(2*MAX_SPEED);
+        left_speed += weights[NB_SENSOR+1]*(old_left+MAX_SPEED)/(2*MAX_SPEED);
+        left_speed += weights[NB_SENSOR+2]*(old_right+MAX_SPEED)/(2*MAX_SPEED);
+        right_speed += weights[NB_SENSOR+2]*(old_left+MAX_SPEED)/(2*MAX_SPEED);
+        right_speed += weights[NB_SENSOR+1]*(old_right+MAX_SPEED)/(2*MAX_SPEED);
 
-        
         // Add neural thresholds
+        // BIAS
         left_speed += weights[NB_SENSOR];
-        right_speed += weights[NB_SENSOR+1];
+        right_speed += weights[NB_SENSOR];
         
+        // printf("1 l:%.2f r:%.2f\n", left_speed, right_speed);
 
         // Apply neuron transform
-        left_speed = MAX_SPEED*(2.0*s(left_speed)-1.0);
-        right_speed = MAX_SPEED*(2.0*s(right_speed)-1.0);
+        //left_speed = MAX_SPEED*(2.0*s(left_speed)-1.0);
+        //right_speed = MAX_SPEED*(2.0*s(right_speed)-1.0);
+
+        left_speed = getRealSpeed(left_speed);
+        right_speed = getRealSpeed(right_speed);
+
+        // Penalty Factor
+        if (left_speed >= MAX_SPEED || left_speed <= -MAX_SPEED) {
+            penalty += 1;
+        }
+
+        if (right_speed >= MAX_SPEED || right_speed <= -MAX_SPEED) {
+            penalty += 1;
+        }
+
+        // printf("2 l:%.2f r:%.2f\n", left_speed, right_speed);
 
         // Make sure we don't accelerate too fast
         if (left_speed - old_left > MAX_ACC) left_speed = old_left+MAX_ACC;
@@ -323,10 +364,11 @@ double fitfunc(double weights[DATASIZE], int its) {
     fit_relative_heading /= its;
 
     // Better fitness should be higher
-    int A=1; //importance coefficient of range
+    int A=5; //importance coefficient of range
     int B=1; //importance coefficient of bearing
     int C=1; //importance coefficient of relative heading
-    
+    int D=3;
+
     // What about negative fitness?
     // shouldnt we calculate just positive ones?
     double tmpVal = A*fit_range + B*fabs(fit_bearing) + C*fabs(fit_relative_heading);
@@ -336,7 +378,7 @@ double fitfunc(double weights[DATASIZE], int its) {
         printf("All zero\n");
     }
     else {
-        fitness = 1/(A*fit_range+B*fabs(fit_bearing)+C*fabs(fit_relative_heading));
+        fitness = 1/(A*fit_range + B*fabs(fit_bearing) + C*fabs(fit_relative_heading) + D*penalty);
     }
 
     //printf("fitness: %.2f \n", fitness);

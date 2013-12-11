@@ -16,7 +16,7 @@
 #define NB_ALL_SENSOR 8 // Number of all proximity sensors
 #define NB_SENSOR 6 // Number of used proximity sensors
 
-#define DATASIZE NB_SENSOR+6 // Number of elements in particle
+#define DATASIZE NB_SENSOR+3 // Number of elements in particle
 
 // Fitness definitions
 #define MAX_DIFF (2*MAX_SPEED) // Maximum difference between wheel speeds
@@ -75,7 +75,8 @@ int main() {
     int oldSpeedr = 0;
     
     int length = 60;
-    printf("length: %i \n", length);
+    //printf("length: %i \n", length);
+
     int counter = 0;
     int trajl[60] = {6, 6, 6, 6, 6, 
                          6, 6, 6, 6, 6,
@@ -118,9 +119,9 @@ int main() {
         speedr = (int) (MAX_SPEED*rand());*/
         
         //wb_differential_wheels_set_speed(speedl,speedr);
-        wb_differential_wheels_set_speed(150*trajl[counter%length],150*trajr[counter%length]);
+        wb_differential_wheels_set_speed(140*trajl[counter%length],140*trajr[counter%length]);
         
-        printf("counter: %i \n", counter);
+        // printf("counter: %i \n", counter);
         
         counter++;
         robot_step(64);
