@@ -46,7 +46,7 @@ to the real one.
 #### Leader
 
 * ~~Do a random trajectory~~
-* follow a predefined trajectory
+* ~~follow a predefined trajectory~~
 
 #### Superviser
 
@@ -84,12 +84,13 @@ to the real one.
 
 * run PSO
 * run PSO with noise
-* Fitness Function
+* optimize trajectory
+* optimize fitness function
 
 ### Implementation Epuck
 
 * implement lookup table for sensor values
-* implement braitenberg controller and weights (see LAB04)
+* implement braitenberg controller and weights (see LAB04 obstacleavoidance main.c)
 
 ### Optional Optimization
 
@@ -120,6 +121,13 @@ Build the controllers
 cd dis-tp-pso/webots/controllers
 make
 ```
+
+Run Webots
+```
+webots &
+```
+
+Open the World dis-tp-pso/webots/worlds/pso_project.wbt and get started!
 
 ### Common Errors 
 
