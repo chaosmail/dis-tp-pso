@@ -32,7 +32,8 @@ to the real one.
 * ~~design PSO~~
 * ~~design fitness function~~
 * ~~design neural network controller (braitenberg controller)~~
-* do nonlinear sensor calibration with epuck
+* ~~do nonlinear sensor calibration with epuck~~
+* fit a curve on the sensor calibration values
 
 ### Implementation Webots
 
@@ -88,7 +89,7 @@ to the real one.
 ### Implementation Epuck
 
 * implement lookup table for sensor values
-* implement braitenberg values
+* implement braitenberg controller and weights (see LAB04)
 
 ### Optional Optimization
 
