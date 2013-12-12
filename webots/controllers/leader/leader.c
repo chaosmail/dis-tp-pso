@@ -59,6 +59,8 @@ int main() {
 
     double fit;
     int i;
+    double *rbufferPointer;
+    double restart=0;
 
     wb_robot_init();
     reset();
@@ -74,35 +76,17 @@ int main() {
     int oldSpeedl = 0;
     int oldSpeedr = 0;
     
-    int length = 60;
+    int length = 12;
     //printf("length: %i \n", length);
 
     int counter = 0;
-    int trajl[60] = {6, 6, 6, 6, 6, 
-                         6, 6, 6, 6, 6,
-                         6, 6, 6, 6, 6, 
-                         6, 6, 6, 6, 6,
-                         8, 8, 8, 8, 8, 
-                         8, 8, 8, 8, 8, 
-                         8, 8, 8, 8, 8, 
-                         8, 8, 8, 8, 8, 
-                         4, 4, 4, 4, 4, 
-                         4, 4, 4, 4, 4, 
-                         4, 4, 4, 4, 4,
-                         4, 4, 4, 4, 4};
+    int trajl[12] = {6,1,6,6,
+                      6,6,10,6,
+                      6,6,6,6};
                      
-    int trajr[60] = {6, 6, 6, 6, 6, 
-                         6, 6, 6, 6, 6,
-                         6, 6, 6, 6, 6, 
-                         6, 6, 6, 6, 6,
-                         4, 4, 4, 4, 4, 
-                         4, 4, 4, 4, 4,
-                         4, 4, 4, 4, 4, 
-                         4, 4, 4, 4, 4,
-                         8, 8, 8, 8, 8, 
-                         8, 8, 8, 8, 8,
-                         8, 8, 8, 8, 8,
-                         8, 8, 8, 8, 8};
+    int trajr[12] = {6,8,6,6,
+                      6,6,1,6,
+                      6,6,6,6};
     
 
     robot_step(64);
@@ -118,13 +102,25 @@ int main() {
         /*speedl = (int) (MAX_SPEED*rand());
         speedr = (int) (MAX_SPEED*rand());*/
         
+        while (receiver_get_queue_length(rec) > 0) {
+        rbufferPointer = (double *)wb_receiver_get_data(rec);
+        restart=rbufferPointer[0];
+        //robot_step(64);
+        wb_receiver_next_packet(rec);
+        }
+         if(restart==1.0){
+          counter=0;
+          restart=0;
+        }
+        //printf("restart: %f\n",restart);
         //wb_differential_wheels_set_speed(speedl,speedr);
-        wb_differential_wheels_set_speed(140*trajl[counter%length],140*trajr[counter%length]);
+        wb_differential_wheels_set_speed(100*trajl[counter%length],100*trajr[counter%length]);
+        
         
         // printf("counter: %i \n", counter);
         
         counter++;
-        robot_step(64);
+        robot_step(10*64);
     }
 
     return 0;
