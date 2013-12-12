@@ -35,7 +35,7 @@
 #define FIXEDRAD_NB  2
 
 /* Fitness definitions */
-#define FIT_ITS 30                      // Number of fitness steps to run during evolution
+#define FIT_ITS 65                      // Number of fitness steps to run during evolution
 
 #define FINALRUNS 10
 #define NEIGHBORHOOD STANDARD
@@ -52,6 +52,7 @@ static WbFieldRef robs_rotation[ROBOTS+1];
 double loc[ROBOTS+1][4]; //needed to communicate leader positions to follower
 
 WbDeviceTag emitter[MAX_ROB];
+WbDeviceTag leader_emitter;
 WbDeviceTag rec[MAX_ROB];
 const double *locTemp[ROBOTS+1];
 const double *rot[ROBOTS+1];
@@ -60,14 +61,13 @@ double new_rot[ROBOTS+1][4];
 
 // Initial Weights
 // Use -DBL_MAX to be randomly generated in PSO
-//double initial_weight[DATASIZE] = { 0, -2, -1,  0, 1, 2, 0, 0, 0, 0, 0, 0 };
-double initial_weight[DATASIZE] = { -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX };
-
+//double initial_weight[DATASIZE] = { -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX };
+//double initial_weight[DATASIZE] = { 30, 50, 60, 60, -50, -30, 20, 0, 0};//
+double initial_weight[DATASIZE] = { 40.55, 56.86, 66.39, 68.36, -51.12, -32.21, 25.08, 21.17, 1.99 };
 // Velocity of Changement of Weights (Particle velocity)
 // Use -DBL_MAX to be randomly generated in PSO
-double pso_velocity[DATASIZE] = { -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX,
-                                  -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX};
-
+//double pso_velocity[DATASIZE] = { -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX};
+double pso_velocity[DATASIZE] = {5,5,5,5,5,5,5,5,5};
 
 /********** Function declarations **********/
 
@@ -109,6 +109,9 @@ void reset(void) {
         em[7]++; // change name 'emitter.'
         receive[8]++; // change name 'receiver.'
     }
+    
+    /*enable emitter for leader*/
+    leader_emitter=wb_robot_get_device("emitter3");
 
     //Position -> for all robots
     for (i=0; i<=ROBOTS; i++) {
@@ -275,6 +278,7 @@ void calc_fitness(double weights[ROBOTS][DATASIZE], double fit[ROBOTS], int its,
 
     double buffer[DATASIZE+1];// to send particles to robots
     double buffer_loc[255];//to send positions to robot
+    double buffer_leader[1];//to tell leader to reset
     double *rbuffer; //to get fitness from robots
     double global_x,global_z,rel_x,rel_z; //for localisation
     int i,j;
@@ -293,10 +297,14 @@ void calc_fitness(double weights[ROBOTS][DATASIZE], double fit[ROBOTS], int its,
 
             //put robot back to initial chain position
             reset_pos(i);
+            //printf("reset");
+            
 
             if (i==2){
                 //resets also leader
                 reset_pos(3);
+                buffer_leader[0] = 1.0;
+                wb_emitter_send(leader_emitter,(char *)buffer_leader,1*sizeof(double));
             }
 
             for (j=0;j<DATASIZE;j++) {
@@ -308,7 +316,7 @@ void calc_fitness(double weights[ROBOTS][DATASIZE], double fit[ROBOTS], int its,
             // printf("Use these weights: %.1f %.1f %.1f %.1f %.1f %.1f %.1f %.1f %.1f\n", buffer[0], buffer[1], buffer[2] ,buffer[3], buffer[4], buffer[5], buffer[6], buffer[7], buffer[DATASIZE]);
 
             wb_emitter_send(emitter[i],(void *)buffer,(DATASIZE+1)*sizeof(double));
-            // printf("%f %f %f %f %f\n",buffer[0],buffer[1],buffer[2],buffer[3],buffer[4]);
+            //printf("%f %f %f %f %f\n",buffer[0],buffer[1],buffer[2],buffer[3],buffer[4]);
         }
 
         // Wait for response */
@@ -377,12 +385,13 @@ void calc_fitness(double weights[ROBOTS][DATASIZE], double fit[ROBOTS], int its,
 
             rbuffer = (double *)wb_receiver_get_data(rec[i]);
             
-            /*if (i==2) {
-                fit[i] += rbuffer[0]*ROBOTS;
-            }
-            else {*/
+            if (i==2) {
                 fit[i] += rbuffer[0];
-            //}
+                //printf("fit %f",fit[i]);
+            }
+            else {
+                fit[i] += rbuffer[0];
+            }
 
             //printf("received fitness: %0.2f\n",rbuffer[0]);
             wb_receiver_next_packet(rec[i]);
