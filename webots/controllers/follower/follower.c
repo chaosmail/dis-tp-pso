@@ -170,13 +170,14 @@ double getRealDistance(double sensorValue) {
 double getRealSpeed(double val){
 
     double convVal = 0;
+    double mapVal = 2000;
 
-    if (val > 30)
+    if (val > mapVal)
         convVal = 1;
-    else if (val < -30)
+    else if (val < -mapVal)
         convVal = -1;
     else if (val != 0) 
-        convVal = val/30;
+        convVal = val/mapVal;
 
     return MAX_SPEED*convVal;
 }
@@ -247,10 +248,10 @@ double fitfunc(double weights[DATASIZE], int its) {
         ds_value[6] = (double) wb_distance_sensor_get_value(ds[6]);
         ds_value[7] = (double) wb_distance_sensor_get_value(ds[7]);*/
         
-        printf("my sensorvalues: %.2f %.2f %.2f %.2f %.2f %.2f \n",ds_value[0],ds_value[1],ds_value[2],ds_value[5],ds_value[6],ds_value[7]);
+        //printf("my sensorvalues: %.2f %.2f %.2f %.2f %.2f %.2f \n",ds_value[0],ds_value[1],ds_value[2],ds_value[5],ds_value[6],ds_value[7]);
 
         // Weights for the follower controller
-         //printf("my weights: %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f\n", weights[0], weights[1], weights[2], weights[3], weights[4], weights[5], weights[6], weights[7]);
+        // printf("my weights: %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f\n", weights[0], weights[1], weights[2], weights[3], weights[4], weights[5], weights[6], weights[7]);
 
         // Feed proximity sensor values to neural net
         left_speed = 0.0;
@@ -274,10 +275,15 @@ double fitfunc(double weights[DATASIZE], int its) {
         left_speed  = weights[0]*ds_value[0] + weights[1]*ds_value[1] + weights[2]*ds_value[2] + weights[3]*ds_value[5] + weights[4]*ds_value[6] + weights[5]*ds_value[7];
         right_speed = weights[0]*ds_value[7] + weights[1]*ds_value[6] + weights[2]*ds_value[5] + weights[3]*ds_value[2] + weights[4]*ds_value[1] + weights[5]*ds_value[0];
 
-        //printf("l:%.2f r:%.2f\n", left_speed, right_speed);
+        // printf("1 l:%.2f r:%.2f\n", left_speed, right_speed);
 
-        left_speed /= 200.0;
+        // Adjust Values to 'normal' ones, that we can use recursive and BIAS
+        left_speed *= 10.0;
+        right_speed *= 10.0;
+
+        /*left_speed /= 200.0;
         right_speed /= 200.0;
+        */
 
         // Recursive connections
         left_speed += weights[NB_SENSOR+1]*(old_left+MAX_SPEED)/(2*MAX_SPEED);
@@ -290,7 +296,7 @@ double fitfunc(double weights[DATASIZE], int its) {
         left_speed += weights[NB_SENSOR];
         right_speed += weights[NB_SENSOR];
         
-        //printf("1 l:%.2f r:%.2f\n", left_speed, right_speed);
+        // printf("2 l:%.2f r:%.2f\n", left_speed, right_speed);
 
         // Apply neuron transform
         //left_speed = MAX_SPEED*(2.0*s(left_speed)-1.0);
@@ -299,6 +305,8 @@ double fitfunc(double weights[DATASIZE], int its) {
         left_speed = getRealSpeed(left_speed);
         right_speed = getRealSpeed(right_speed);
 
+        // printf("3 l:%.2f r:%.2f\n", left_speed, right_speed);
+        
         // Penalty Factor
         if (left_speed >= MAX_SPEED || left_speed <= -MAX_SPEED) {
             penalty += 1;

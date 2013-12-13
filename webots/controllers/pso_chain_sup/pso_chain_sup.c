@@ -61,12 +61,13 @@ double new_rot[ROBOTS+1][4];
 
 // Initial Weights
 // Use -DBL_MAX to be randomly generated in PSO
-//double initial_weight[DATASIZE] = { -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX };
-double initial_weight[DATASIZE] = { 100, 100, 100, 100, -100, -100, 5, 0, 0};//
+// double initial_weight[DATASIZE] = { -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX };
+double initial_weight[DATASIZE] = { -5.24, -5.18, 37.47, 24.90, -2.46, 53.59, 28.54, -38.52, -17.62 };
+
 // Velocity of Changement of Weights (Particle velocity)
 // Use -DBL_MAX to be randomly generated in PSO
-//double pso_velocity[DATASIZE] = { -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX};
-double pso_velocity[DATASIZE] = {5,5,5,5,5,5,5,5,5};
+double pso_velocity[DATASIZE] = { -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX};
+// double pso_velocity[DATASIZE] = {5,5,5,5,5,5,5,5,5};
 
 /********** Function declarations **********/
 
