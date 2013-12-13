@@ -67,13 +67,7 @@ double new_rot[ROBOTS+1][4];
 // Initial Weights
 // Use -DBL_MAX to be randomly generated in PSO
 // double initial_weight[DATASIZE] = { -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX };
-// double initial_weight[DATASIZE] = { -5.24, -5.18, 37.47, 24.90, -2.46, 53.59, 28.54, -38.52, -17.62 };
-// double initial_weight[DATASIZE] = { -7.82, -0.44, 27.73, 32.34, -0.63, 51.66, 34.43, -27.97, -20.91 };
-// double initial_weight[DATASIZE] = { -6.43, -2.41, 24.01, 31.19, -9.18, 54.10, 40.78, -13.87, -17.14 };
-// double initial_weight[DATASIZE] = { -12.09, -5.23, 19.88, 18.15, 2.75, 58.89, 39.86, -31.23, -22.47 };
-// double initial_weight[DATASIZE] = { -25.69, -5.58, 11.95, 11.34, 1.11, 71.13, 34.16, -39.25, -51.15 };
-// double initial_weight[DATASIZE] = { -30.49, 1.26, 10.08, 8.85, 1.41, 73.25, 24.71, -47.95, -50.47 };
-double initial_weight[DATASIZE] = { -14.54, -0.03, 5.27, 18.31, -3.92, 77.44, 39.72, -59.67, -48.93 };
+double initial_weight[DATASIZE] = { 11.39, 3.75, -4.01, -4.34, 0.90, 89.49, 57.74, -68.55, 5.35 };
 
 // Velocity of Changement of Weights (Particle velocity)
 // Use -DBL_MAX to be randomly generated in PSO
@@ -170,7 +164,7 @@ int main() {
     endfit = 0.0;
     bestfit = 0.0;
 
-    for (j=0; j<8; j++) {
+    for (j=0; j<10; j++) {
 
         /* Get result of evolution */
         weights = pso(SWARMSIZE,NB,LWEIGHT,NBWEIGHT,VMAX,MININIT,MAXINIT,PSO_ITS,DATASIZE,ROBOTS,initial_weight,pso_velocity);
