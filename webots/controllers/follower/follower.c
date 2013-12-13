@@ -157,11 +157,11 @@ double getRealDistance(double sensorValue) {
 
     double a = 3766;
     double b = -2.012;
-    double offset = 40;
+    double offset = 35;
 
     //return a*exp(b*sensorValue) + offset; //inverse function
     if (sensorValue<=offset) //further than sensors can measure
-      return 10;
+      return 0;
   
     return log((sensorValue-offset)/a)/b;
 }
@@ -250,7 +250,7 @@ double fitfunc(double weights[DATASIZE], int its) {
         printf("my sensorvalues: %.2f %.2f %.2f %.2f %.2f %.2f \n",ds_value[0],ds_value[1],ds_value[2],ds_value[5],ds_value[6],ds_value[7]);
 
         // Weights for the follower controller
-        // printf("my weights: %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f\n", weights[0], weights[1], weights[2], weights[3], weights[4], weights[5], weights[6], weights[7]);
+         //printf("my weights: %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f\n", weights[0], weights[1], weights[2], weights[3], weights[4], weights[5], weights[6], weights[7]);
 
         // Feed proximity sensor values to neural net
         left_speed = 0.0;

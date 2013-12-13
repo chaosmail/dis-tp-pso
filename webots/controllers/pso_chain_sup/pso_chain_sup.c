@@ -25,7 +25,7 @@
 #define VMAX 20.0                       // Maximum velocity particle can attain
 #define MININIT -20.0                   // Lower bound on initialization value
 #define MAXINIT 20.0                    // Upper bound on initialization value
-#define PSO_ITS 50                      // Number of iterations for PSO to run
+#define PSO_ITS 30                     // Number of iterations for PSO to run
 #define DATASIZE NB_SENSOR+3            // Number of elements in particle
 
 /* Neighborhood types */
@@ -35,7 +35,7 @@
 #define FIXEDRAD_NB  2
 
 /* Fitness definitions */
-#define FIT_ITS 65                      // Number of fitness steps to run during evolution
+#define FIT_ITS 60                      // Number of fitness steps to run during evolution
 
 #define FINALRUNS 10
 #define NEIGHBORHOOD STANDARD
@@ -62,13 +62,7 @@ double new_rot[ROBOTS+1][4];
 // Initial Weights
 // Use -DBL_MAX to be randomly generated in PSO
 //double initial_weight[DATASIZE] = { -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX };
-double initial_weight[DATASIZE] = { 30, 50, 60, 60, -50, -30, 20, 0, 0};//
-//double initial_weight[DATASIZE] = { 40.55, 56.86, 66.39, 68.36, -51.12, -32.21, 25.08, 21.17, 1.99 };
-//double initial_weight[DATASIZE] = { 47.34, 44.72, 76.91, 64.95, -46.60, -14.68, 36.43, 22.24, 10.76 };
-//double initial_weight[DATASIZE] = { 53.11, 52.48, 84.00, 67.63, -53.52, -14.23, 36.02, 26.34, 16.49 };
-//double initial_weight[DATASIZE] = { 60.72, 56.98, 87.46, 71.69, -47.46, -13.68, 33.26, 24.24, 19.06 };
-//double initial_weight[DATASIZE] = { 68.26, 55.76, 94.29, 62.67, -45.02, -24.50, 38.31, 23.05, 17.67 };
-//double initial_weight[DATASIZE] = { 59.23, 60.74, 106.07, 68.53, -47.41, -19.24, 56.36, 25.82, 17.89 };
+double initial_weight[DATASIZE] = { 100, 100, 100, 100, -100, -100, 5, 0, 0};//
 // Velocity of Changement of Weights (Particle velocity)
 // Use -DBL_MAX to be randomly generated in PSO
 //double pso_velocity[DATASIZE] = { -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX};
