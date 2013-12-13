@@ -80,12 +80,12 @@ int main() {
     //printf("length: %i \n", length);
 
     int counter = 0;
-    int trajl[12] = {6,1,6,6,
-                      6,6,10,6,
+    int trajl[12] = {6,6,6,6,
+                      6,6,1,6,
                       6,6,6,6};
                      
-    int trajr[12] = {6,8,6,6,
-                      6,6,1,6,
+    int trajr[12] = {6,1,6,6,
+                      6,6,6,6,
                       6,6,6,6};
     
 

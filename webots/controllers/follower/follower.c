@@ -152,16 +152,19 @@ double s(double v) {
         return 1.0/(1.0 + exp(-1*v));
 }
 
-/*/ Map the nonlinear sensor values to linear distances
-double getRealDistance(double x) {
+// Map the nonlinear sensor values to linear distances
+double getRealDistance(double sensorValue) {
 
     double a = 3766;
     double b = -2.012;
-    double offset = 30;
+    double offset = 40;
 
-    //return a*exp(b*x) + offset;
-    return x;
-}*/
+    //return a*exp(b*sensorValue) + offset; //inverse function
+    if (sensorValue<=offset) //further than sensors can measure
+      return 10;
+  
+    return log((sensorValue-offset)/a)/b;
+}
 
 // Map the Value*Weights to Speed
 double getRealSpeed(double val){
@@ -226,16 +229,25 @@ double fitfunc(double weights[DATASIZE], int its) {
         
         if (braiten) j--;            // Loop forever
 
-        ds_value[0] = (double) wb_distance_sensor_get_value(ds[0]);
+        ds_value[0] = getRealDistance((double) wb_distance_sensor_get_value(ds[0]));
+        ds_value[1] = getRealDistance((double) wb_distance_sensor_get_value(ds[1]));
+        ds_value[2] = getRealDistance((double) wb_distance_sensor_get_value(ds[2]));
+        ds_value[3] = 0;//(double) wb_distance_sensor_get_value(ds[3]));
+        ds_value[4] = 0;//(double) wb_distance_sensor_get_value(ds[4]));
+        ds_value[5] = getRealDistance((double) wb_distance_sensor_get_value(ds[5]));
+        ds_value[6] = getRealDistance((double) wb_distance_sensor_get_value(ds[6]));
+        ds_value[7] = getRealDistance((double) wb_distance_sensor_get_value(ds[7]));
+        
+        /*ds_value[0] = (double) wb_distance_sensor_get_value(ds[0]);
         ds_value[1] = (double) wb_distance_sensor_get_value(ds[1]);
         ds_value[2] = (double) wb_distance_sensor_get_value(ds[2]);
         ds_value[3] = 0;//(double) wb_distance_sensor_get_value(ds[3]));
         ds_value[4] = 0;//(double) wb_distance_sensor_get_value(ds[4]));
         ds_value[5] = (double) wb_distance_sensor_get_value(ds[5]);
         ds_value[6] = (double) wb_distance_sensor_get_value(ds[6]);
-        ds_value[7] = (double) wb_distance_sensor_get_value(ds[7]);
+        ds_value[7] = (double) wb_distance_sensor_get_value(ds[7]);*/
         
-        //printf("my sensorvalues: %.2f %.2f %.2f %.2f %.2f %.2f \n",ds_value[0],ds_value[1],ds_value[2],ds_value[5],ds_value[5],ds_value[7]);
+        printf("my sensorvalues: %.2f %.2f %.2f %.2f %.2f %.2f \n",ds_value[0],ds_value[1],ds_value[2],ds_value[5],ds_value[6],ds_value[7]);
 
         // Weights for the follower controller
         // printf("my weights: %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f\n", weights[0], weights[1], weights[2], weights[3], weights[4], weights[5], weights[6], weights[7]);
