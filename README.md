@@ -1,4 +1,4 @@
-# Project: Evolving a “following and chain-building” behavior using PSO
+# Evolving a “following and chain-building” behavior using PSO
 
 ## Overview
 
@@ -23,9 +23,9 @@ to the real one.
 * minimize relative range
 * minimize relative bearing
 * minimize relative orientation
-* minimize velocity difference ??
+* penalize reaching MAX_SPEED
 
-## Topics and Goals
+## Tasks
 
 ### Prequisits and Design
 
@@ -33,7 +33,7 @@ to the real one.
 * ~~design fitness function~~
 * ~~design neural network controller (braitenberg controller)~~
 * ~~do nonlinear sensor calibration with epuck~~
-* fit a curve on the sensor calibration values
+* ~~fit a curve on the sensor calibration values~~
 
 ### Implementation Webots
 
@@ -72,7 +72,6 @@ to the real one.
 * ~~Calculate realtive range (see LAB05 odometry follower3.c)~~ @Etienne
 * ~~Calculate relative bearing (see LAB05  odometry follower3.c)~~ @Etienne
 * ~~Calculate realtive orientation (see LAB05 odometry follower3.c)~~ @Etienne
-* Calculate wheel speed difference ??
 * ~~Move robot (see LAB06 PSO obs_con.c)~~
 * ~~Calculate the fitness (see LAB06 PSO obs_con.c)~~
 
@@ -128,29 +127,6 @@ webots &
 ```
 
 Open the World dis-tp-pso/webots/worlds/pso_project.wbt and get started!
-
-### Common Errors 
-
-#### Ubuntu 13.10 x64
-
-While building the PSO controllers with Webots 6.2.4 x64 , libjpeg is missing
-```
-/usr/bin/ld: warning: libjpeg.so.62, needed by /usr/local/webots/lib/libController.so, not found (try using -rpath or -rpath-link)
-```
-Solution: Install libjpeg62
-```
-sudo apt-get install libjpeg62
-```
-
-While running Webots 7.3.0 x64, libraw5 is missing (but libraw9 is installed)
-```
-/usr/local/webots7/webots-bin: error while loading shared libraries: libraw.so.5: cannot open shared object file: No such file or directory
-```
-Solution: Link the libraw9 lib to libraw5
-```
-cd /usr/lib
-sudo ln -s /usr/lib/x86_64-linux-gnu/libraw.so.9 /usr/lib/libraw.so.5
-```
 
 ## Useful Links
 

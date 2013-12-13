@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <float.h>
 #include <math.h>
+#include <unistd.h>
 #include "pso.h"
 #include <webots/emitter.h>
 #include <webots/receiver.h>
@@ -8,6 +9,10 @@
 
 
 /********** Constants **********/
+
+/* Save Results */
+#define SAVE_RESULTS 1
+#define RESULTS_DIR "results"
 
 #define ROBOTS 3                        
 #define MAX_ROB 3
@@ -25,7 +30,7 @@
 #define VMAX 20.0                       // Maximum velocity particle can attain
 #define MININIT -20.0                   // Lower bound on initialization value
 #define MAXINIT 20.0                    // Upper bound on initialization value
-#define PSO_ITS 30                     // Number of iterations for PSO to run
+#define PSO_ITS 40                     // Number of iterations for PSO to run
 #define DATASIZE NB_SENSOR+3            // Number of elements in particle
 
 /* Neighborhood types */
@@ -35,7 +40,7 @@
 #define FIXEDRAD_NB  2
 
 /* Fitness definitions */
-#define FIT_ITS 60                      // Number of fitness steps to run during evolution
+#define FIT_ITS 65                      // Number of fitness steps to run during evolution
 
 #define FINALRUNS 10
 #define NEIGHBORHOOD STANDARD
@@ -62,7 +67,13 @@ double new_rot[ROBOTS+1][4];
 // Initial Weights
 // Use -DBL_MAX to be randomly generated in PSO
 // double initial_weight[DATASIZE] = { -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX };
-double initial_weight[DATASIZE] = { -5.24, -5.18, 37.47, 24.90, -2.46, 53.59, 28.54, -38.52, -17.62 };
+// double initial_weight[DATASIZE] = { -5.24, -5.18, 37.47, 24.90, -2.46, 53.59, 28.54, -38.52, -17.62 };
+// double initial_weight[DATASIZE] = { -7.82, -0.44, 27.73, 32.34, -0.63, 51.66, 34.43, -27.97, -20.91 };
+// double initial_weight[DATASIZE] = { -6.43, -2.41, 24.01, 31.19, -9.18, 54.10, 40.78, -13.87, -17.14 };
+// double initial_weight[DATASIZE] = { -12.09, -5.23, 19.88, 18.15, 2.75, 58.89, 39.86, -31.23, -22.47 };
+// double initial_weight[DATASIZE] = { -25.69, -5.58, 11.95, 11.34, 1.11, 71.13, 34.16, -39.25, -51.15 };
+// double initial_weight[DATASIZE] = { -30.49, 1.26, 10.08, 8.85, 1.41, 73.25, 24.71, -47.95, -50.47 };
+double initial_weight[DATASIZE] = { -14.54, -0.03, 5.27, 18.31, -3.92, 77.44, 39.72, -59.67, -48.93 };
 
 // Velocity of Changement of Weights (Particle velocity)
 // Use -DBL_MAX to be randomly generated in PSO
@@ -77,7 +88,7 @@ void reset_pos(int);
 void nRandom(int[][SWARMSIZE],int);
 void nClosest(int[][SWARMSIZE],int);
 void fixedRadius(int[][SWARMSIZE],double);
-
+void writeWeightsToFile(double, double[DATASIZE]);
 
 /********** Function implementations **********/
 
@@ -132,6 +143,12 @@ void reset(void) {
 int main() {
 
     printf("*** Started PSO ***\n");
+    
+    char cwd[1024];
+    if (getcwd(cwd, sizeof(cwd)) != NULL)
+        fprintf(stdout, "Current working dir: %s\n", cwd);
+
+    writeWeightsToFile(0,initial_weight);
 
     double *weights; // Evolved result
     double buffer[255]; // sending buffer
@@ -153,7 +170,7 @@ int main() {
     endfit = 0.0;
     bestfit = 0.0;
 
-    for (j=0; j<4; j++) {
+    for (j=0; j<8; j++) {
 
         /* Get result of evolution */
         weights = pso(SWARMSIZE,NB,LWEIGHT,NBWEIGHT,VMAX,MININIT,MAXINIT,PSO_ITS,DATASIZE,ROBOTS,initial_weight,pso_velocity);
@@ -192,6 +209,8 @@ int main() {
                 bestw[i] = weights[i];
                 initial_weight[i] = weights[i]; // to send the best weights back into the next pso
             }
+
+            writeWeightsToFile(fit,weights);
         }
 
         printf("Performance: %.3f\n",fit);
@@ -218,7 +237,6 @@ int main() {
             printf("%.2f, ",bestw[j]);
     }
     
-    
     for (i=0;i<ROBOTS;i++) {
         wb_emitter_send(emitter[i],(void *)buffer,(DATASIZE+1)*sizeof(double));
     }
@@ -227,6 +245,32 @@ int main() {
     while (1) wb_robot_step(64);
 
     return 0;
+}
+
+void writeWeightsToFile(double performance, double weights[DATASIZE]) {
+
+    int j;
+
+    char fileName[256];
+    snprintf(fileName, sizeof fileName, "../../%s/%.4f_performance.txt", RESULTS_DIR, performance);
+
+    FILE *f = fopen(fileName, "w");
+    if (f == NULL)
+    {
+        printf("Error opening file %s!\n", fileName);
+        exit(-1);
+    }
+
+    for (j=0;j<DATASIZE;j++) {
+        if (j == DATASIZE-1)
+            fprintf(f,"%.2f };\n",weights[j]);
+        else if (j == 0)
+            fprintf(f,"double initial_weight[DATASIZE] = { %.2f, ",weights[j]);
+        else
+            fprintf(f,"%.2f, ",weights[j]);
+    }
+
+    fclose(f);
 }
 
 // Makes sure no robots are overlapping

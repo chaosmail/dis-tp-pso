@@ -170,7 +170,7 @@ double getRealDistance(double sensorValue) {
 double getRealSpeed(double val){
 
     double convVal = 0;
-    double mapVal = 2000;
+    double mapVal = 2200;
 
     if (val > mapVal)
         convVal = 1;
@@ -387,21 +387,21 @@ double fitfunc(double weights[DATASIZE], int its) {
     fit_relative_heading /= its;
 
     // Better fitness should be higher
-    int A=10; //importance coefficient of range
-    int B=1; //importance coefficient of bearing
-    int C=6; //importance coefficient of relative heading
-    int D=0;
+    int A=10; // importance coefficient of range
+    int B=1; // importance coefficient of bearing
+    int C=6; // importance coefficient of relative heading
+    int D=0; // importance of penalty
 
     // What about negative fitness?
     // shouldnt we calculate just positive ones?
-    double tmpVal = A*fit_range + B*fabs(fit_bearing) + C*fabs(fit_relative_heading);
+    double inverseFitness = A*fit_range + B*fabs(fit_bearing) + C*fabs(fit_relative_heading) + D*penalty;
 
-    if (tmpVal == 0) {
+    if (inverseFitness == 0) {
         fitness = 100;
         printf("All zero\n");
     }
     else {
-        fitness = 1/(A*fit_range + B*fabs(fit_bearing) + C*fabs(fit_relative_heading) + D*penalty);
+        fitness = 1/inverseFitness;
     }
 
     //printf("fitness: %.2f \n", fitness);
