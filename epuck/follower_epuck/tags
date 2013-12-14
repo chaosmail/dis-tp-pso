@@ -1,0 +1,10 @@
+DATASIZE	main.c	21
+MAX_ACC	main.c	18
+MAX_SPEED	main.c	17
+Mmain	main.c	/^int main() {$/
+NB_ALL_SENSOR	main.c	19
+NB_SENSOR	main.c	20
+getRealDistance	main.c	/^double getRealDistance(double sensorValue) {$/
+getRealSpeed	main.c	/^double getRealSpeed(double val){$/
+wait	main.c	/^void wait(unsigned long num) {$/
+weights	main.c	24

@@ -1,0 +1,6 @@
+MAX_ACC	main.c	19
+MAX_SPEED	main.c	18
+Mmain	main.c	/^int main() {$/
+rnd	main.c	/^double rnd() {$/
+unf	main.c	/^double unf(double min, double max) {$/
+wait	main.c	/^void wait(unsigned long num) {$/
