@@ -46,7 +46,7 @@ Preparation of Papers for IEEE Sponsored Conferences \& Symposia
 \author{Alice Concordel$^{1}$, Christoph Körner$^{2}$ and Etienne Thalmann$^{3}$% <-this % stops a space
 \thanks{This work is a project of the course Distributed intelligent systems by Prof. Alcherio Martinoli}% <-this % stops a space
 \thanks{A. Concordel is with Faculty of Mechanical Engineering, School of engineering, Ecole Polytechnique fédérale de Lausanne}
-\thanks{C. Körner is with the Faculty of Electrical Engineering...} %=============================FILL IN!!!
+\thanks{C. Körner is with the Faculty of Electrical Engineering, Vienna University of Technology} %=============================FILL IN!!!
 \thanks{E. Thalmann is with Faculty of Mechanical Engineering, School of engineering, Ecole Polytechnique fédérale de Lausanne}%
 }
 
@@ -67,15 +67,26 @@ Preparation of Papers for IEEE Sponsored Conferences \& Symposia
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{INTRODUCTION}
 The goal of this project is to implement a braitenberg-type controller for movement in
-formation on epucks. For this, a PSO algorithm was implemented, using the braitenberg weights as a search space.
+formation on epucks. For this, a PSO algorithm was implemented, using the braitenberg weights as a search space. The formation consists of 3 follower robots and one leader that moves with a predefined trajectory.
 
-\subsection{•}
+\subsection{Design of PSO}
 
-.
 
-\subsubsection{} 
+    Individual Performance
+    Group Solution
+    Heterogeneous Approach
 
-\subsubsection{} 
+\subsection{Fitness Function}
+
+    minimize relative range
+    minimize relative bearing
+    minimize relative orientation
+
+
+
+\section{Methodology}
+heterogeneous, public individual performance 
+
 
 \begin{table}
 \caption{An Example of a Table}
@@ -92,10 +103,6 @@ Three & Four\\
 \end{table}
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{UNITS}
-
-
 
 \addtolength{\textheight}{-3cm}   % This command serves to balance the column lengths
                                   % on the last page of the document manually. It shortens
@@ -103,21 +110,22 @@ Three & Four\\
                                   % This command does not take effect until the next page
                                   % so it should come on the page before the last. Make
                                   % sure that you do not shorten the textheight too much.
+                                  
+\subsection{Implementation Webots}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{}
+\subsubsection{Environment}
 
-\subsection{}
-
-
-\subsection{Numbering}
-
-
-\subsection{Abbreviations and Acronyms}
+\subsubsection{Leader}
+\subsubsection{Supervisor}
 
 
+\subsubsection{Follower}
 
-\subsection{Equations}
+\subsection{Optimization}
+optiomize the fitness etc noise resistant
+no penalty fo rmax speed etc
+bearing more important... ABCD
+
 
 
 
@@ -130,19 +138,13 @@ Three & Four\\
    \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{CONCLUSIONS AND FUTURE WORKS}
-
-\subsection{Conclusions}
-
-
-\subsection{Future Works}
-
-
+\section{Results}
+trajectories and iterations
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusions}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{ACKNOWLEDGMENTS}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The authors would like to thank Alcherio Martinoli for giving the course, Milos Vasic, for his precious advice and support, as well as all the other teaching assistants.
 
 \begin{thebibliography}{99}

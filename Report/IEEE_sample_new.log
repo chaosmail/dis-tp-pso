@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2013.9.10)  14 DEC 2013 16:49
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2013.9.10)  14 DEC 2013 17:35
 entering extended mode
  %&-line parsing enabled.
 **IEEE_sample_new.tex
@@ -149,9 +149,6 @@ Missing character: There is no Ã in font ptmr7t!
 Missing character: There is no © in font ptmr7t!
 Missing character: There is no Ã in font ptmr7t!
 Missing character: There is no © in font ptmr7t!
-Missing character: There is no â in font ptmri7t!
-Missing character: There is no € in font ptmri7t!
-Missing character: There is no ¢ in font ptmri7t!
 
 
 ** Conference Paper **
@@ -171,12 +168,11 @@ Overfull \vbox (80.55833pt too high) has occurred while \output is active []
 [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
 
 
-
 ] (./IEEE_sample_new.aux) ) 
 Here is how much of TeX's memory you used:
  830 strings out of 495061
  13708 string characters out of 1182621
- 63444 words of memory out of 3000000
+ 64444 words of memory out of 3000000
  4073 multiletter control sequences out of 15000+50000
  39142 words of font info for 75 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
@@ -186,7 +182,7 @@ c}</usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share
 /texmf-texlive/fonts/type1/urw/times/utmb8a.pfb></usr/share/texmf-texlive/fonts
 /type1/urw/times/utmbi8a.pfb></usr/share/texmf-texlive/fonts/type1/urw/times/ut
 mr8a.pfb></usr/share/texmf-texlive/fonts/type1/urw/times/utmri8a.pfb>
-Output written on IEEE_sample_new.pdf (1 page, 61735 bytes).
+Output written on IEEE_sample_new.pdf (1 page, 63206 bytes).
 PDF statistics:
  27 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
