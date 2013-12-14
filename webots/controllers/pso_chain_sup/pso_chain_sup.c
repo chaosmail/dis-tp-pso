@@ -30,7 +30,7 @@
 #define VMAX 20.0                       // Maximum velocity particle can attain
 #define MININIT -20.0                   // Lower bound on initialization value
 #define MAXINIT 20.0                    // Upper bound on initialization value
-#define PSO_ITS 40                     // Number of iterations for PSO to run
+#define PSO_ITS 60                     // Number of iterations for PSO to run
 #define DATASIZE NB_SENSOR+3            // Number of elements in particle
 
 /* Neighborhood types */
@@ -67,7 +67,7 @@ double new_rot[ROBOTS+1][4];
 // Initial Weights
 // Use -DBL_MAX to be randomly generated in PSO
 // double initial_weight[DATASIZE] = { -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX };
-double initial_weight[DATASIZE] = { 11.39, 3.75, -4.01, -4.34, 0.90, 89.49, 57.74, -68.55, 5.35 };
+double initial_weight[DATASIZE] = { 5.97, 0.16, 2.05, -2.91, -3.11, 95.31, 68.25, -87.65, 10.36 };
 
 // Velocity of Changement of Weights (Particle velocity)
 // Use -DBL_MAX to be randomly generated in PSO
@@ -164,7 +164,7 @@ int main() {
     endfit = 0.0;
     bestfit = 0.0;
 
-    for (j=0; j<10; j++) {
+    for (j=0; j<100000; j++) {
 
         /* Get result of evolution */
         weights = pso(SWARMSIZE,NB,LWEIGHT,NBWEIGHT,VMAX,MININIT,MAXINIT,PSO_ITS,DATASIZE,ROBOTS,initial_weight,pso_velocity);
