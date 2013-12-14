@@ -99,7 +99,7 @@ to the real one.
 
 ## Development
 
-### Getting started
+### Getting started in Webots
 
 Request a free Webots Licence with your EPFL email adress from www.cyberbotics.com/registration/webots/trial/
 
@@ -128,6 +128,12 @@ webots &
 ```
 
 Open the World dis-tp-pso/webots/worlds/pso_project.wbt and get started!
+
+
+### Getting started with epucks
+
+
+
 
 ## Useful Links
 
