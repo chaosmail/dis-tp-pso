@@ -23,7 +23,6 @@ to the real one.
 * minimize relative range
 * minimize relative bearing
 * minimize relative orientation
-* penalize reaching MAX_SPEED
 
 ## Tasks
 
@@ -33,7 +32,7 @@ to the real one.
 * ~~design fitness function~~
 * ~~design neural network controller (braitenberg controller)~~
 * ~~do nonlinear sensor calibration with epuck~~
-* ~~fit a curve on the sensor calibration values~~
+* ~~fit a curve on the sensor calibration values to get corresponding distance~~
 
 ### Implementation Webots
 
@@ -48,16 +47,19 @@ to the real one.
 * ~~Do a random trajectory~~
 * ~~follow a predefined trajectory~~
 
-#### Superviser
+#### Supervisor
 
 * ~~read coordinates of each personal leader and follower and sends that values to each follower (see LAB05 odometry flock_super.c)~~ @Etienne
-* ~~send the coordinates of the personal leader in hte followers coordinate system to the follower~~ @Etienne
+* ~~send the coordinates of the personal leader in the followers coordinate system to the follower~~ @Etienne
+* ~~reset chain position at each fitness iteration~~
+* ~~send interrupt to leader to communicate restart of trajectory~~
 
 ##### pso
 
 * ~~Send particles to robot (see LAB06 PSO pso_obs_sup.c)~~ @Christoph
 * ~~Receive all the fitness values (see LAB06 PSO pso_obs_sup.c)~~ @Christoph
 * ~~get best local performance, best neighborhood performance (see LAB06 PSO pso_obs_sup.c)~~ @Christoph
+* ~~write results in text file for long simulations~~
 
 #### Follower
 
@@ -89,8 +91,9 @@ to the real one.
 
 ### Implementation Epuck
 
-* implement lookup table for sensor values
-* implement braitenberg controller and weights (see LAB04 obstacleavoidance main.c)
+* ~~implement lookup table for sensor values~~
+* ~~implement braitenberg controller and weights (see LAB04 obstacleavoidance main.c)~~
+* ~~implement leader trajectory (random and predefined)~~
 
 ### Optional Optimization
 

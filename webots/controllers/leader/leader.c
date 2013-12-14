@@ -120,7 +120,7 @@ int main() {
         
         // printf("counter: %i \n", counter);
         
-        counter++;
+        //counter++;
         robot_step(10*64);
     }
 
