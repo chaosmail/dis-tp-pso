@@ -32,7 +32,7 @@
 #define MININIT -20.0                   // Lower bound on initialization value
 #define MAXINIT 20.0                    // Upper bound on initialization value
 #define PSO_ITS 40                      // Number of iterations for PSO to run
-#define DATASIZE NB_SENSOR+3            // Number of elements in particle
+#define DATASIZE NB_SENSOR+6           // Number of elements in particle
 
 /* Neighborhood types */
 #define STANDARD    -1
@@ -67,8 +67,8 @@ double new_rot[ROBOTS+1][4];
 
 // Initial Weights
 // Use -DBL_MAX to be randomly generated in PSO
- double initial_weight[DATASIZE] = { -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX };
-//double initial_weight[DATASIZE] = { 5.97, 0.16, 2.05, -2.91, -3.11, 95.31, 68.25, -87.65, 10.36 };
+// double initial_weight[DATASIZE] = { -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX };
+double initial_weight[DATASIZE] = { 5.97, 0.16, 2.05, -2.91, -3.11, 95.31, 68.25, -87.65, 10.36, 0.5, 4, 0.02 };
 
 // Velocity of Changement of Weights (Particle velocity)
 // Use -DBL_MAX to be randomly generated in PSO

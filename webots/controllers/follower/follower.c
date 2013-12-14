@@ -16,11 +16,13 @@
 #define NB_ALL_SENSOR 8 // Number of all proximity sensors
 #define NB_SENSOR 6 // Number of used proximity sensors
 
-#define DATASIZE NB_SENSOR+3 // Number of elements in particle
+#define DATASIZE NB_SENSOR+6 // Number of elements in particle
 
 // Fitness definitions
 #define MAX_DIFF (2*MAX_SPEED) // Maximum difference between wheel speeds
 #define MAX_SENS 4096.0 // Maximum sensor value
+#define MIN_DISTANCE 1.5 // Distance to the Leader in cm
+#define MAX_DISTANCE 4 // Distance to the Leader in cm
 
 
 /********** Global vars **********/
@@ -101,23 +103,11 @@ int main() {
 
         // printf("received weights: %.2f %.2f %.2f %.2f %.2f %.2f %.2f\n", rbuffer[0], rbuffer[1], rbuffer[2], rbuffer[3], rbuffer[4], rbuffer[5], rbuffer[DATASIZE]);
 
-        // Check for pre-programmed avoidance behavior
-        // We need this in the epuck when PSO is done
-        /*if (rbuffer[DATASIZE] == -1.0) {
-
-            braiten = 1;
-            fitfunc(good_w,100);
-        }*/
-        // Otherwise, run provided controller
-        //else {
-
-            // printf("Start evaluating fitness\n");
-            fit = fitfunc(rbuffer,rbuffer[DATASIZE]); //evaluates fitness of the received particle
-            // printf("Stopped evaluating fitness\n");
-            
-            buffer[0] = fit;
-            wb_emitter_send(emitter,(void *)buffer,sizeof(double)); //sends the fitness back to the controller.
-        //}
+        fit = fitfunc(rbuffer,rbuffer[DATASIZE]); //evaluates fitness of the received particle
+        
+        buffer[0] = fit;
+        wb_emitter_send(emitter,(void *)buffer,sizeof(double)); //sends the fitness back to the controller.
+        
     }
 
     return 0;
@@ -199,31 +189,38 @@ double fitfunc(double weights[DATASIZE], int its) {
     printf("\n");*/
 
     // Fitness variables
-    /*double fit_speed;           // Speed aspect of fitness
-    double fit_diff;            // Speed difference between wheels aspect of fitness
-    double fit_sens;            // Proximity sensing aspect of fitness*/
     double fit_range;           //range aspect of fitness
     double fit_bearing;          //bearing aspect of fitness
     double fit_relative_heading; //relative heading aspect of fitness
     double new_leader_range, new_leader_bearing, new_relative_heading; // received leader range and bearing and relative heading
-    double *rbbuffer;                  // buffer for the range and bearin
-    double sens_val[NB_ALL_SENSOR]; // Average values for each proximity sensor
+    double *rbbuffer;           // buffer for the range and bearin
     double fitness;             // Fitness of controller
-    double penalty = 0;         // Penalize Fitness value
+    double penalty;             // Penalize Fitness value
+    double distance;            // Distance to the next robot
+
+    double pid_distance;
+    double pid_distance_error;
+    double pid_distance_prev_error;
+    double pid_distance_integral;
+    double pid_distance_derivative;
+
+    double dt = 0.1;
+    double Kp;
+    double Ki;
+    double Kd;
 
     // Initially no fitness measurements
-    /*fit_speed = 0.0;
-    fit_diff = 0.0;*/
     fit_range=0.0;
     fit_bearing=0.0;
     fit_relative_heading=0.0;
+    penalty = 0.0;
 
-    for (i=0;i<NB_ALL_SENSOR;i++) {
-        sens_val[i] = 0.0;
-    }
-    //fit_sens = 0.0;
     old_left = 0.0;
     old_right = 0.0;
+
+    pid_distance_prev_error = 0.0;
+    pid_distance_integral = 0.0;
+    pid_distance_derivative = 0.0;
 
     // Evaluate fitness repeatedly
     for (j=0;j<its;j++) {
@@ -239,15 +236,24 @@ double fitfunc(double weights[DATASIZE], int its) {
         ds_value[6] = getRealDistance((double) wb_distance_sensor_get_value(ds[6]));
         ds_value[7] = getRealDistance((double) wb_distance_sensor_get_value(ds[7]));
         
-        /*ds_value[0] = (double) wb_distance_sensor_get_value(ds[0]);
-        ds_value[1] = (double) wb_distance_sensor_get_value(ds[1]);
-        ds_value[2] = (double) wb_distance_sensor_get_value(ds[2]);
-        ds_value[3] = 0;//(double) wb_distance_sensor_get_value(ds[3]));
-        ds_value[4] = 0;//(double) wb_distance_sensor_get_value(ds[4]));
-        ds_value[5] = (double) wb_distance_sensor_get_value(ds[5]);
-        ds_value[6] = (double) wb_distance_sensor_get_value(ds[6]);
-        ds_value[7] = (double) wb_distance_sensor_get_value(ds[7]);*/
-        
+        distance = (ds_value[0] + ds_value[7])/2; 
+        printf("Distance: %.2f\n", distance);
+
+        // Implementing Ziegler–Nichols method for PID controller
+        // Ku .. ultimate gain
+        // Pu .. oscillation period
+        Kp = 0.5*weights[NB_SENSOR+4]; // 0.60*weights[NB_SENSOR+4];  // 0.6 * Ku
+        Kd = 0.0; //2*Kp/weights[NB_SENSOR+4];  // 2 * Kp / Pu
+        Ki = 0.0; //;Kp*weights[NB_SENSOR+4]/8;  // Kp * Ku / 8
+
+        pid_distance_error = MIN_DISTANCE - distance;
+        pid_distance_integral = pid_distance_integral + pid_distance_error*dt;
+        pid_distance_derivative = (pid_distance_error - pid_distance_prev_error)/dt;
+        pid_distance = Kp*pid_distance_error + Ki*pid_distance_integral + Kd*pid_distance_derivative;
+        pid_distance_prev_error = pid_distance_error;
+
+        printf("PID Distance: %.2f\n", pid_distance);
+
         //printf("my sensorvalues: %.2f %.2f %.2f %.2f %.2f %.2f \n",ds_value[0],ds_value[1],ds_value[2],ds_value[5],ds_value[6],ds_value[7]);
 
         // Weights for the follower controller
@@ -256,15 +262,7 @@ double fitfunc(double weights[DATASIZE], int its) {
         // Feed proximity sensor values to neural net
         left_speed = 0.0;
         right_speed = 0.0;
-        /*for (i=0;i<NB_SENSOR;i++) {
-            left_speed += weights[i]*ds_value[i];
-            right_speed += weights[i+NB_SENSOR+1]*ds_value[i];
-        }*/
-        
-        //only use sensors 0,1,6,7 and use symmetry
-        //left_speed = weights[0]*ds_value[0]+weights[1]*ds_value[1]+weights[6]*ds_value[6]+weights[7]*ds_value[7];
-        //right_speed = weights[0]*ds_value[7]+weights[1]*ds_value[6]+weights[6]*ds_value[1]+weights[7]*ds_value[0];
-        
+     
         // We use IR0, IR1, IR2, IR5, IR6, IR7
         // We use 6 symmetric weights
         // we have these weights
@@ -281,27 +279,27 @@ double fitfunc(double weights[DATASIZE], int its) {
         left_speed *= 10.0;
         right_speed *= 10.0;
 
-        /*left_speed /= 200.0;
-        right_speed /= 200.0;
-        */
-
         // Recursive connections
         left_speed += weights[NB_SENSOR+1]*(old_left+MAX_SPEED)/(2*MAX_SPEED);
         left_speed += weights[NB_SENSOR+2]*(old_right+MAX_SPEED)/(2*MAX_SPEED);
         right_speed += weights[NB_SENSOR+2]*(old_left+MAX_SPEED)/(2*MAX_SPEED);
         right_speed += weights[NB_SENSOR+1]*(old_right+MAX_SPEED)/(2*MAX_SPEED);
 
-        // Add neural thresholds
-        // BIAS
+        // Add neural thresholds - BIAS
         left_speed += weights[NB_SENSOR];
         right_speed += weights[NB_SENSOR];
         
-        // printf("2 l:%.2f r:%.2f\n", left_speed, right_speed);
+        printf("1 l:%.2f r:%.2f\n", left_speed, right_speed);
+
+        // Add PID thresholds - BIAS
+        if (distance < MAX_DISTANCE) {
+            left_speed -= (left_speed*pid_distance*weights[NB_SENSOR+3]);
+            right_speed -= (left_speed*pid_distance*weights[NB_SENSOR+3]);
+        }
+        
+        printf("2 l:%.2f r:%.2f\n", left_speed, right_speed);
 
         // Apply neuron transform
-        //left_speed = MAX_SPEED*(2.0*s(left_speed)-1.0);
-        //right_speed = MAX_SPEED*(2.0*s(right_speed)-1.0);
-
         left_speed = getRealSpeed(left_speed);
         right_speed = getRealSpeed(right_speed);
 
@@ -342,17 +340,8 @@ double fitfunc(double weights[DATASIZE], int its) {
         
         // Set the motor speeds
         wb_differential_wheels_set_speed((int)left_speed,(int)right_speed);
+
         robot_step(128); // run one step
-
-        // Get current fitness value
-
-        /*// Average speed
-        fit_speed += (fabs(left_speed) + fabs(right_speed))/(2.0*MAX_SPEED);
-        // Difference in speed
-        fit_diff += fabs(left_speed - right_speed)/MAX_DIFF;
-        // Sensor values
-        for (i=0;i<NB_SENSOR;i++) {
-            sens_val[i] += ds_value[i]/MAX_SENS;*/
 
         /* Receive leader range, bearing and relative heading of leader */
         while (wb_receiver_get_queue_length(rec) > 0) {
@@ -362,7 +351,7 @@ double fitfunc(double weights[DATASIZE], int its) {
             // this data is received
             // printf("x %.2f, z %.2f, phi %.2f\n",rbbuffer[0] , rbbuffer[1], rbbuffer[2]);
 
-            new_leader_range = sqrt(rbbuffer[0]*rbbuffer[0] + rbbuffer[1]*rbbuffer[1]);
+            new_leader_range = sqrt(rbbuffer[0]*rbbuffer[0] + rbbuffer[1]*rbbuffer[1]) - MIN_DISTANCE;
             new_leader_bearing = -atan2(rbbuffer[0],rbbuffer[1]);
             new_relative_heading = rbbuffer[2];
 
@@ -374,14 +363,6 @@ double fitfunc(double weights[DATASIZE], int its) {
         fit_relative_heading += new_relative_heading;
     }
 
-    /*// Find most active sensor
-    for (i=0;i<NB_SENSOR;i++) {
-        if (sens_val[i] > fit_sens) fit_sens = sens_val[i];
-    }*/
-    // Average values over all steps
-    /*fit_speed /= its;
-    fit_diff /= its;
-    fit_sens /= its;*/
     fit_range /= its;
     fit_bearing /= its;
     fit_relative_heading /= its;
