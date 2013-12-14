@@ -62,6 +62,9 @@ int main() {
     double *rbufferPointer;
     double restart=0;
 
+    // initialize random seed:
+    srand (time(NULL));
+
     wb_robot_init();
     reset();
     for(i=0;i<NB_ALL_SENSOR;i++) {
@@ -98,8 +101,8 @@ int main() {
 
         // Leader just moves ranomly
         // weighted movement
-        speedl = (int) ((MAX_SPEED*unf(0.6,1))*7 + oldSpeedl*3)/10;
-        speedr = (int) ((MAX_SPEED*unf(0.6,1))*7 + oldSpeedr*3)/10;
+        speedl = (int) ((MAX_SPEED*unf(0.4,1))*8 + oldSpeedl*2)/10;
+        speedr = (int) ((MAX_SPEED*unf(0.4,1))*8 + oldSpeedr*2)/10;
         /*speedl = (int) (MAX_SPEED*rand());
         speedr = (int) (MAX_SPEED*rand());*/
         

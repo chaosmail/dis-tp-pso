@@ -41,7 +41,7 @@
 #define FIXEDRAD_NB  2
 
 /* Fitness definitions */
-#define FIT_ITS 180                      // Number of fitness steps to run during evolution
+#define FIT_ITS 60                      // Number of fitness steps to run during evolution
 
 #define FINALRUNS 10
 #define NEIGHBORHOOD STANDARD
@@ -68,12 +68,12 @@ double new_rot[ROBOTS+1][4];
 // Initial Weights
 // Use -DBL_MAX to be randomly generated in PSO
 // double initial_weight[DATASIZE] = { -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX };
-double initial_weight[DATASIZE] = { 5.97, 0.16, 2.05, -2.91, -3.11, 95.31, 68.25, -87.65, 10.36, 0.5, 4, 0.02 };
+double initial_weight[DATASIZE] = { 5.97, 0.16, 2.05, -2.91, -3.11, 95.31, 68.25, -87.65, 10.36, -DBL_MAX, -DBL_MAX, -DBL_MAX};
 
 // Velocity of Changement of Weights (Particle velocity)
 // Use -DBL_MAX to be randomly generated in PSO
-double pso_velocity[DATASIZE] = { -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX};
-// double pso_velocity[DATASIZE] = {5,5,5,5,5,5,5,5,5};
+// double pso_velocity[DATASIZE] = { -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX};
+double pso_velocity[DATASIZE] = {0,0,0,0,0,0,0,0,0,-DBL_MAX,-DBL_MAX,-DBL_MAX};
 
 /********** Function declarations **********/
 

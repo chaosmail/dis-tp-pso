@@ -21,7 +21,7 @@
 // Fitness definitions
 #define MAX_DIFF (2*MAX_SPEED) // Maximum difference between wheel speeds
 #define MAX_SENS 4096.0 // Maximum sensor value
-#define MIN_DISTANCE 1.5 // Distance to the Leader in cm
+#define MIN_DISTANCE 1 // Distance to the Leader in cm
 #define MAX_DISTANCE 4 // Distance to the Leader in cm
 
 
@@ -236,8 +236,14 @@ double fitfunc(double weights[DATASIZE], int its) {
         ds_value[6] = getRealDistance((double) wb_distance_sensor_get_value(ds[6]));
         ds_value[7] = getRealDistance((double) wb_distance_sensor_get_value(ds[7]));
         
-        distance = (ds_value[0] + ds_value[7])/2; 
-        printf("Distance: %.2f\n", distance);
+        distance = MAX_DISTANCE;
+
+        if (ds_value[0]!=0 && ds_value[0]<distance) distance = ds_value[0];
+        if (ds_value[1]!=0 && ds_value[1]<distance) distance = ds_value[1];
+        if (ds_value[6]!=0 && ds_value[6]<distance) distance = ds_value[6];
+        if (ds_value[7]!=0 && ds_value[7]<distance) distance = ds_value[7];
+
+        // printf("Distance: %.2f\n", distance);
 
         // Implementing Ziegler–Nichols method for PID controller
         // Ku .. ultimate gain
@@ -252,9 +258,9 @@ double fitfunc(double weights[DATASIZE], int its) {
         pid_distance = Kp*pid_distance_error + Ki*pid_distance_integral + Kd*pid_distance_derivative;
         pid_distance_prev_error = pid_distance_error;
 
-        printf("PID Distance: %.2f\n", pid_distance);
+        // printf("PID Distance: %.2f\n", pid_distance);
 
-        //printf("my sensorvalues: %.2f %.2f %.2f %.2f %.2f %.2f \n",ds_value[0],ds_value[1],ds_value[2],ds_value[5],ds_value[6],ds_value[7]);
+        // printf("my sensorvalues: %.2f %.2f %.2f %.2f %.2f %.2f \n",ds_value[0],ds_value[1],ds_value[2],ds_value[5],ds_value[6],ds_value[7]);
 
         // Weights for the follower controller
         // printf("my weights: %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f\n", weights[0], weights[1], weights[2], weights[3], weights[4], weights[5], weights[6], weights[7]);
@@ -289,7 +295,7 @@ double fitfunc(double weights[DATASIZE], int its) {
         left_speed += weights[NB_SENSOR];
         right_speed += weights[NB_SENSOR];
         
-        printf("1 l:%.2f r:%.2f\n", left_speed, right_speed);
+        // printf("1 l:%.2f r:%.2f\n", left_speed, right_speed);
 
         // Add PID thresholds - BIAS
         if (distance < MAX_DISTANCE) {
@@ -297,7 +303,7 @@ double fitfunc(double weights[DATASIZE], int its) {
             right_speed -= (left_speed*pid_distance*weights[NB_SENSOR+3]);
         }
         
-        printf("2 l:%.2f r:%.2f\n", left_speed, right_speed);
+        // printf("2 l:%.2f r:%.2f\n", left_speed, right_speed);
 
         // Apply neuron transform
         left_speed = getRealSpeed(left_speed);
@@ -351,7 +357,7 @@ double fitfunc(double weights[DATASIZE], int its) {
             // this data is received
             // printf("x %.2f, z %.2f, phi %.2f\n",rbbuffer[0] , rbbuffer[1], rbbuffer[2]);
 
-            new_leader_range = sqrt(rbbuffer[0]*rbbuffer[0] + rbbuffer[1]*rbbuffer[1]) - MIN_DISTANCE;
+            new_leader_range = sqrt(rbbuffer[0]*rbbuffer[0] + rbbuffer[1]*rbbuffer[1]);
             new_leader_bearing = -atan2(rbbuffer[0],rbbuffer[1]);
             new_relative_heading = rbbuffer[2];
 
