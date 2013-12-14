@@ -2,6 +2,7 @@
 #include <float.h>
 #include <math.h>
 #include <unistd.h>
+#include <time.h>
 #include "pso.h"
 #include <webots/emitter.h>
 #include <webots/receiver.h>
@@ -30,7 +31,7 @@
 #define VMAX 20.0                       // Maximum velocity particle can attain
 #define MININIT -20.0                   // Lower bound on initialization value
 #define MAXINIT 20.0                    // Upper bound on initialization value
-#define PSO_ITS 60                     // Number of iterations for PSO to run
+#define PSO_ITS 40                      // Number of iterations for PSO to run
 #define DATASIZE NB_SENSOR+3            // Number of elements in particle
 
 /* Neighborhood types */
@@ -40,7 +41,7 @@
 #define FIXEDRAD_NB  2
 
 /* Fitness definitions */
-#define FIT_ITS 65                      // Number of fitness steps to run during evolution
+#define FIT_ITS 180                      // Number of fitness steps to run during evolution
 
 #define FINALRUNS 10
 #define NEIGHBORHOOD STANDARD
@@ -138,10 +139,18 @@ int main() {
 
     printf("*** Started PSO ***\n");
     
-    char cwd[1024];
-    if (getcwd(cwd, sizeof(cwd)) != NULL)
-        fprintf(stdout, "Current working dir: %s\n", cwd);
+    // initialize random seed:
+    srand (time(NULL));
 
+    
+    // Print current directory, for debug reasons
+    // char cwd[1024];
+    // if (getcwd(cwd, sizeof(cwd)) != NULL)
+    //    fprintf(stdout, "Current working dir: %s\n", cwd);
+
+    // Write initial weights to file with performance 0
+    // Do this here, that errors with writing results can
+    // be detected BEFORE the simulation runs
     writeWeightsToFile(0,initial_weight);
 
     double *weights; // Evolved result

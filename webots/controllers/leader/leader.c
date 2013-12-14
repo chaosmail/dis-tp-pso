@@ -80,25 +80,26 @@ int main() {
     //printf("length: %i \n", length);
 
     int counter = 0;
-    int trajl[12] = {6,6,6,6,
+    
+    /*int trajl[12] = {6,6,6,6,
                       6,6,4,4,
                       6,6,6,6};
                      
     int trajr[12] = {6,4,4,6,
                       6,6,6,6,
-                      6,6,6,6};
+                      6,6,6,6};*/
     
 
     robot_step(64);
     while (1) {
 
-        //oldSpeedl = speedl;
-        //oldSpeedr = speedr;
+        oldSpeedl = speedl;
+        oldSpeedr = speedr;
 
         // Leader just moves ranomly
         // weighted movement
-        //speedl = (int) ((MAX_SPEED*unf(0.5,1))*4 + oldSpeedl*6)/10;
-        //speedr = (int) ((MAX_SPEED*unf(0.5,1))*4 + oldSpeedr*6)/10;
+        speedl = (int) ((MAX_SPEED*unf(0.6,1))*7 + oldSpeedl*3)/10;
+        speedr = (int) ((MAX_SPEED*unf(0.6,1))*7 + oldSpeedr*3)/10;
         /*speedl = (int) (MAX_SPEED*rand());
         speedr = (int) (MAX_SPEED*rand());*/
         
@@ -112,10 +113,10 @@ int main() {
           counter=0;
           restart=0;
         }
-        //printf("restart: %f\n",restart);
-        //wb_differential_wheels_set_speed(speedl,speedr);
-        wb_differential_wheels_set_speed(100*trajl[counter%length],100*trajr[counter%length]);
+        // printf("restart: %f\n",restart);
+        // wb_differential_wheels_set_speed(100*trajl[counter%length],100*trajr[counter%length]);
         
+        wb_differential_wheels_set_speed(speedl,speedr);
         
         // printf("counter: %i \n", counter);
         
