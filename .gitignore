@@ -20,6 +20,12 @@
 *.app
 *.hex
 
+# Latex
+*.gz
+*.log
+*.aux
+*.cls
+
 # Labs
 lab06/
 lab05-solution/
