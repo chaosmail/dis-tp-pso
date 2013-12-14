@@ -81,9 +81,10 @@ to the real one.
 
 ### Optimization in Webots
 
-* run PSO
-* run PSO with noise
-* optimize trajectory
+* ~~run PSO~~
+* ~~run PSO with noise~~
+* ~~optimize trajectory~~
+* optimize PSO parameters such as neighborhood, swarmsize, personal best weight, neighborhoods best weight, velocities, etc.
 * optimize fitness function
 
 ### Implementation Epuck
@@ -93,7 +94,7 @@ to the real one.
 
 ### Optional Optimization
 
-* noiseresistant PSO
+* ~~noiseresistant PSO~~
 * PID controller
 
 ## Development
