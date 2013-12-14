@@ -2,9 +2,8 @@
 # Configuration
 # ------------------------------------------------------------------------------
 
-PROG   = follower
-EPUCKLIBROOT = 
-../../epuck/EpuckDevelopmentTree/library
+PROG   = leader
+EPUCKLIBROOT = ../../epuck/EpuckDevelopmentTree/library
 
 # ==============================================================================
 # Potential Epuck Libraries
