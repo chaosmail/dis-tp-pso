@@ -21,9 +21,7 @@
 #define DATASIZE NB_SENSOR+3 // Number of elements in particle
 
 // Weights for the Braitenberg obstacle avoidance algorithm
-double weights[DATASIZE] = { -34.37, -1.41, 1.90, -0.29, 2.46, 110.47, 71.47, -77.93, -12.43 };
-//int weightleft[8] = {-10, -10, -5, 0, 0, 5, 10, 10};
-//int weightright[8] = {10, 10, 5, 0, 0, -5, -10, -10};
+double weights[DATASIZE] = { -24.45, 4.96, 1.69, -0.43, 5.70, 100.01, 56.63, -71.26, 17.65 };
 
 // Waits for a certain amount of time
 // Note that the effective waiting time is not always the same (because of possible interrupts).

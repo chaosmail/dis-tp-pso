@@ -3,8 +3,7 @@
 # ------------------------------------------------------------------------------
 
 PROG   = follower
-EPUCKLIBROOT = 
-../../epuck/EpuckDevelopmentTree/library
+EPUCKLIBROOT = /home/koerner/myfiles/epuck/EpuckDevelopmentTree/library
 
 # ==============================================================================
 # Potential Epuck Libraries
