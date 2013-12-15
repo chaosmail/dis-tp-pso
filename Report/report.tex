@@ -25,7 +25,7 @@
 %\usepackage{amssymb}  % assumes amsmath package installed
 
 \title{\LARGE \bf
-Preparation of Papers for IEEE Sponsored Conferences \& Symposia
+Learning a ‘following and chain-building’ behavior using PSO
 }
 
 %\author{ \parbox{3 in}{\centering Huibert Kwakernaak*
@@ -43,10 +43,10 @@ Preparation of Papers for IEEE Sponsored Conferences \& Symposia
 %         {\tt\small pmisra@cs.wright.edu}}
 %}
 
-\author{Alice Concordel$^{1}$, Christoph Körner$^{2}$ and Etienne Thalmann$^{3}$% <-this % stops a space
+\author{Alice Concordel$^{1}$, Christoph K\"{o}rner$^{2}$ and Etienne Thalmann$^{3}$% <-this % stops a space
 \thanks{This work is a project of the course Distributed intelligent systems by Prof. Alcherio Martinoli}% <-this % stops a space
 \thanks{A. Concordel is with Faculty of Mechanical Engineering, School of engineering, Ecole Polytechnique fédérale de Lausanne}
-\thanks{C. Körner is with the Faculty of Electrical Engineering, Vienna University of Technology} %=============================FILL IN!!!
+\thanks{C. K\"{o}rner is with the Faculty of Electrical Engineering, Vienna University of Technology} %=============================FILL IN!!!
 \thanks{E. Thalmann is with Faculty of Mechanical Engineering, School of engineering, Ecole Polytechnique fédérale de Lausanne}%
 }
 
@@ -70,17 +70,17 @@ The goal of this project is to implement a braitenberg-type controller for movem
 formation on epucks. For this, a PSO algorithm was implemented, using the braitenberg weights as a search space. The formation consists of 3 follower robots and one leader that moves with a predefined trajectory.
 
 \subsection{Design of PSO}
+In order to design a PSO algorithm for a collaborative task, we had to consider three axes: The diversity of the team, the performance evaluation and the solution sharing. We decided  to use a heterogeneous approach with individual performance evaluation and group solution sharing. The idea is to evaluate different solutions on the three followers (heterogenous approach) in order to save computation time and to share the pool of solutions (group solution) to have evolution of the particles. Since we are interested in the performance of each follower with its own particle and not in the performance of the entire chain we need an individual performance evaluation.
 
 
-    Individual Performance
-    Group Solution
-    Heterogeneous Approach
-
-\subsection{Fitness Function}
-
-    minimize relative range
-    minimize relative bearing
-    minimize relative orientation
+\subsection{Design of Fitness Function}
+The idea of the fitness function is to evaluate the performance of a controller in being able to follow a leader and stay in chain formation. The design of the fitness function is of primary importance because it defines towards which solution the PSO will converge. Four characteristics were found to be important to evaluate following and chain-building behavior:
+\begin{itemize}
+\item The relative range, which is the distance between the follower and the leader, has to be minimized.
+\item The relative heading of leader and follower. The heading is defined as the angular orientation of the robot in a fixed frame of reference. The relative heading is zero, when both robots are facing the same way. This angle has to be minimized in order to have nice following. 
+\item The relative bearing, which is the angular offset of the leader's position with respect to the heading of the follower. This quantity has to be minimized so that the follower always stays behind the leader.
+\item The relative speed between leader and follower can be minimized in order to have a smoother following behavior. This was part of our original design but has later been proven unnecessary.
+\end{itemize}
 
 
 
