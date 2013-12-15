@@ -103,6 +103,7 @@ int main() {
         // weighted movement
         speedl = (int) ((MAX_SPEED*unf(0.4,1))*8 + oldSpeedl*2)/10;
         speedr = (int) ((MAX_SPEED*unf(0.4,1))*8 + oldSpeedr*2)/10;
+
         /*speedl = (int) (MAX_SPEED*rand());
         speedr = (int) (MAX_SPEED*rand());*/
         
