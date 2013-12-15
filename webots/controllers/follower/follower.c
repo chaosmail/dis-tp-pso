@@ -248,9 +248,9 @@ double fitfunc(double weights[DATASIZE], int its) {
         // Implementing Ziegler–Nichols method for PID controller
         // Ku .. ultimate gain
         // Pu .. oscillation period
-        Kp = 0.5*weights[NB_SENSOR+4]; // 0.60*weights[NB_SENSOR+4];  // 0.6 * Ku
-        Kd = 0.0; //2*Kp/weights[NB_SENSOR+4];  // 2 * Kp / Pu
-        Ki = 0.0; //;Kp*weights[NB_SENSOR+4]/8;  // Kp * Ku / 8
+        Kp = 0.60*weights[NB_SENSOR+4];  // 0.6 * Ku
+        Kd = 2*Kp/weights[NB_SENSOR+5];  // 2 * Kp / Pu
+        Ki = Kp*weights[NB_SENSOR+5]/8;  // Kp * Pu / 8
 
         pid_distance_error = MIN_DISTANCE - distance;
         pid_distance_integral = pid_distance_integral + pid_distance_error*dt;
