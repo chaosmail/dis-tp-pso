@@ -67,7 +67,7 @@ Learning a ‘following and chain-building’ behavior using PSO
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{INTRODUCTION}
 The goal of this project is to implement a braitenberg-type controller for movement in
-formation on epucks. For this, a PSO algorithm was implemented, using the braitenberg weights as a search space. The formation consists of 3 follower robots and one leader that moves with a predefined trajectory.
+formation on e-pucks. For this, a PSO algorithm was implemented, using the weights of a Braitenberg controller as a search space. The formation consists of 3 follower robots and one leader that moves with a predefined trajectory. The PSO is run on the Webots platform, which is capable of simulating the behavior of the e-pucks in a realistic way. This makes it possible to run the algorithm and get results much faster than doing it on real e-pucks.
 
 \subsection{Design of PSO}
 In order to design a PSO algorithm for a collaborative task, we had to consider three axes: The diversity of the team, the performance evaluation and the solution sharing. We decided  to use a heterogeneous approach with individual performance evaluation and group solution sharing. The idea is to evaluate different solutions on the three followers (heterogenous approach) in order to save computation time and to share the pool of solutions (group solution) to have evolution of the particles. Since we are interested in the performance of each follower with its own particle and not in the performance of the entire chain we need an individual performance evaluation.
@@ -83,7 +83,7 @@ The idea of the fitness function is to evaluate the performance of a controller 
 \end{itemize}
 The fitness function has to be maximized. We define it as follows:
 \begin{equation}\label{fitness}
-F=\frac{1}{A*d+B*\theta+C*\Delta phi+C* \Delta v}
+F=\frac{1}{A*d+B*\theta+C*\Delta \phi+C* \Delta v}
 \end{equation}
 Where A,B,C,D are coefficients of importance of the different components that are initially set to one and have to be determined.
 
@@ -112,11 +112,11 @@ Where A,B,C,D are coefficients of importance of the different components that ar
                                   % so it should come on the page before the last. Make
                                   % sure that you do not shorten the textheight too much.
                                   
-\subsection{Implementation Webots}
+\subsection{Implementation on Webots}
 
 \subsubsection{Environment}
+The Webots environment used to simulate the following and chain building consists of one leader e-puck and three followers on a smooth ground free of walls or any obstacles. They followers are initially placed in line behind the leader with a distance of 10 cm between their centres and facing the same way. A supervisor, which is a special kind of robot with more functions, is used to run the PSO algorithm, track the position of the robots, communicate with them and reset their position.
 
-\subsubsection{Leader}
 \subsubsection{Supervisor}
 The role of the supervisor is to set the initial settings and then to run the PSO. In short, it sends the particles to the followers for their evaluation, gets their fitness back, evolves the swarm and restarts an iteration.\\
 The number of particles in the swarm is set higher than the number of followers. Since the approach is heterogeneous, the supervisor evaluates them in batches of three by sending one particle (i.e. one set of weights for their Braitenberg controller) to each follower. Then comes the evaluation period during which the followers evaluate the fitness of the controller. To evaluate the fitness of its run according to equation \ref{fitness}, the follower needs to know its coordinates and those of the robot it is following. Thus, while the followers are doing their evaluation run, the supervisor sends to the followers their spatial coordinates (translation and roatation) and those of their respective leader. Once the fitness of each particles is evaluated, it is returned to the supervisor and stored. The supervisor resets the followers and the leader in their initial position and replicates the previous procedure with the following batch of particles. Once all the particles of the swarm have been evaluated, they evolve according to the PSO algorithm using the fitness values obtained for each particle. The new swarm obtained is evaluated  and evolved in the same way as the previous swarm. The number of these evolution iterations is set beforehand.\\
@@ -124,6 +124,9 @@ When the last iteration is over, the weights of the particle that returned the b
 The supervisor also communicates in a unilateral way with the leader, sending an interrupt message every time the positions are reset. The purpose of this is that the leader restarts its trajectory, so as to have always the same trajectory in the case of predefined ones. This was needed at the beginning of the evolutions in order to have all the particles evaluated on a trajectory having the same level of difficulty. This way, weights that are worse than others cannot have a better fitness evaluation just because the trajectory was easier, which would be counter productive.
 
 \subsubsection{Follower}
+
+
+\subsubsection{Leader}
 
 \subsection{PSO characteristics and Optimization}
 swarmsize, neigborhoods, iterations, initial weights etc.
