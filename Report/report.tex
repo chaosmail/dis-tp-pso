@@ -76,31 +76,32 @@ In order to design a PSO algorithm for a collaborative task, we had to consider 
 \subsection{Design of Fitness Function}
 The idea of the fitness function is to evaluate the performance of a controller in being able to follow a leader and stay in chain formation. The design of the fitness function is of primary importance because it defines towards which solution the PSO will converge. Four characteristics were found to be important to evaluate following and chain-building behavior:
 \begin{itemize}
-\item The relative range, which is the distance between the follower and the leader, has to be minimized.
-\item The relative heading of leader and follower. The heading is defined as the angular orientation of the robot in a fixed frame of reference. The relative heading is zero, when both robots are facing the same way. This angle has to be minimized in order to have nice following. 
-\item The relative bearing, which is the angular offset of the leader's position with respect to the heading of the follower. This quantity has to be minimized so that the follower always stays behind the leader.
-\item The relative speed between leader and follower can be minimized in order to have a smoother following behavior. This was part of our original design but has later been proven unnecessary.
+\item The range $d$, which is the distance between the follower and the leader, has to be minimized.
+\item The relative heading of leader and follower $\Delta \phi $. The heading is defined as the angular orientation of the robot in a fixed frame of reference. The relative heading is zero, when both robots are facing the same way. This angle has to be minimized in order to have nice following. 
+\item The bearing $\theta $, which is the angular offset of the leader's position with respect to the heading of the follower. This quantity has to be minimized so that the follower always stays behind the leader.
+\item The relative speed between leader and follower $\Delta v $ can be minimized in order to have a smoother following behavior. This was part of our original design but has later been proven unnecessary.
 \end{itemize}
-
-
+The fitness function has to be maximized. We define it as follows:
+\begin{equation}\label{fitness}
+F=\frac{1}{A*d+B*\theta+C*\Delta phi+C* \Delta v}
+\end{equation}
+Where A,B,C,D are coefficients of importance of the different components that are initially set to one and have to be determined.
 
 \section{Methodology}
-heterogeneous, public individual performance 
 
-
-\begin{table}
-\caption{An Example of a Table}
-\label{table_example}
-\begin{center}
-\begin{tabular}{|c||c|}
-\hline
-One & Two\\
-\hline
-Three & Four\\
-\hline
-\end{tabular}
-\end{center}
-\end{table}
+%\begin{table}
+%\caption{An Example of a Table}
+%\label{table_example}
+%\begin{center}
+%\begin{tabular}{|c||c|}
+%\hline
+%One & Two\\
+%\hline
+%Three & Four\\
+%\hline
+%\end{tabular}
+%\end{center}
+%\end{table}
 
 
 
@@ -117,11 +118,15 @@ Three & Four\\
 
 \subsubsection{Leader}
 \subsubsection{Supervisor}
-
+The role of the supervisor is to set the initial settings and then to run the PSO. In short, it sends the particles to the followers for their evaluation, gets their fitness back, evolves the swarm and restarts an iteration.\\
+The number of particles in the swarm is set higher than the number of followers. Since the approach is heterogeneous, the supervisor evaluates them in batches of three by sending one particle (i.e. one set of weights for their Braitenberg controller) to each follower. Then comes the evaluation period during which the followers evaluate the fitness of the controller. To evaluate the fitness of its run according to equation \ref{fitness}, the follower needs to know its coordinates and those of the robot it is following. Thus, while the followers are doing their evaluation run, the supervisor sends to the followers their spatial coordinates (translation and roatation) and those of their respective leader. Once the fitness of each particles is evaluated, it is returned to the supervisor and stored. The supervisor resets the followers and the leader in their initial position and replicates the previous procedure with the following batch of particles. Once all the particles of the swarm have been evaluated, they evolve according to the PSO algorithm using the fitness values obtained for each particle. The new swarm obtained is evaluated  and evolved in the same way as the previous swarm. The number of these evolution iterations is set beforehand.\\
+When the last iteration is over, the weights of the particle that returned the best fitness during this run of the PSO are tested by sending them to the followers a chosen number of times and measuring the average fitness of the solution. If the results are better than the previous best, the solution is stored in a text file and set as initial weights for the next PSO run. The entire PSO algorithm is run again like the previous one, each particle being initialized with the best weights so far. This higher level of iterations is run as long as needed to get satisfying results. The weights that had the best fitness evaluation can be extracted from the text file and implemented on the real epucks.\\
+The supervisor also communicates in a unilateral way with the leader, sending an interrupt message every time the positions are reset. The purpose of this is that the leader restarts its trajectory, so as to have always the same trajectory in the case of predefined ones. This was needed at the beginning of the evolutions in order to have all the particles evaluated on a trajectory having the same level of difficulty. This way, weights that are worse than others cannot have a better fitness evaluation just because the trajectory was easier, which would be counter productive.
 
 \subsubsection{Follower}
 
-\subsection{Optimization}
+\subsection{PSO characteristics and Optimization}
+swarmsize, neigborhoods, iterations, initial weights etc.
 optiomize the fitness etc noise resistant
 no penalty fo rmax speed etc
 bearing more important... ABCD
