@@ -16,7 +16,7 @@
 #define NB_ALL_SENSOR 8 // Number of all proximity sensors
 #define NB_SENSOR 6 // Number of used proximity sensors
 
-#define DATASIZE NB_SENSOR+6 // Number of elements in particle
+#define DATASIZE NB_SENSOR+7 // Number of elements in particle
 
 // Fitness definitions
 #define MAX_DIFF (2*MAX_SPEED) // Maximum difference between wheel speeds
@@ -101,8 +101,8 @@ int main() {
 
         // Leader just moves ranomly
         // weighted movement
-        speedl = (int) ((MAX_SPEED*unf(0.4,1))*8 + oldSpeedl*2)/10;
-        speedr = (int) ((MAX_SPEED*unf(0.4,1))*8 + oldSpeedr*2)/10;
+        speedl = (int) ((MAX_SPEED*unf(0.2,1))*8 + oldSpeedl*2)/10;
+        speedr = (int) ((MAX_SPEED*unf(0.2,1))*8 + oldSpeedr*2)/10;
 
         /*speedl = (int) (MAX_SPEED*rand());
         speedr = (int) (MAX_SPEED*rand());*/
@@ -125,7 +125,7 @@ int main() {
         // printf("counter: %i \n", counter);
         
         //counter++;
-        robot_step(10*64);
+        robot_step(20*64);
     }
 
     return 0;

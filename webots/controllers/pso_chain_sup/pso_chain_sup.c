@@ -32,7 +32,7 @@
 #define MININIT -20.0                   // Lower bound on initialization value
 #define MAXINIT 20.0                    // Upper bound on initialization value
 #define PSO_ITS 40                      // Number of iterations for PSO to run
-#define DATASIZE NB_SENSOR+6           // Number of elements in particle
+#define DATASIZE NB_SENSOR+7            // Number of elements in particle
 
 /* Neighborhood types */
 #define STANDARD    -1
@@ -41,7 +41,7 @@
 #define FIXEDRAD_NB  2
 
 /* Fitness definitions */
-#define FIT_ITS 180                      // Number of fitness steps to run during evolution
+#define FIT_ITS 60                      // Number of fitness steps to run during evolution
 
 #define FINALRUNS 10
 #define NEIGHBORHOOD STANDARD
@@ -68,12 +68,12 @@ double new_rot[ROBOTS+1][4];
 // Initial Weights
 // Use -DBL_MAX to be randomly generated in PSO
 // double initial_weight[DATASIZE] = { -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX };
-double initial_weight[DATASIZE] = { -24.45, 4.96, 1.69, -0.43, 5.70, 100.01, 56.63, -71.26, 17.65, -0.28, -0.10, 26.87};
+double initial_weight[DATASIZE] = { -24.45, 4.96, 1.69, -0.43, 5.70, 100.01, 56.63, -71.26, 17.65, 0.05, 1.5, 0.1, 0.6};
 
 // Velocity of Changement of Weights (Particle velocity)
 // Use -DBL_MAX to be randomly generated in PSO
 // double pso_velocity[DATASIZE] = { -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX, -DBL_MAX};
-double pso_velocity[DATASIZE] = {0,0,0,0,0,0,0,0,0,-DBL_MAX,-DBL_MAX,-DBL_MAX};
+double pso_velocity[DATASIZE] = {0,0,0,0,0,0,0,0,0,-DBL_MAX,0.05,0.05,0.05};
 
 /********** Function declarations **********/
 

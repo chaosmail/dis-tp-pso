@@ -16,12 +16,12 @@
 #define NB_ALL_SENSOR 8 // Number of all proximity sensors
 #define NB_SENSOR 6 // Number of used proximity sensors
 
-#define DATASIZE NB_SENSOR+6 // Number of elements in particle
+#define DATASIZE NB_SENSOR+7 // Number of elements in particle
 
 // Fitness definitions
 #define MAX_DIFF (2*MAX_SPEED) // Maximum difference between wheel speeds
 #define MAX_SENS 4096.0 // Maximum sensor value
-#define MIN_DISTANCE 1 // Distance to the Leader in cm
+#define MIN_DISTANCE 2 // Distance to the Leader in cm
 #define MAX_DISTANCE 4 // Distance to the Leader in cm
 
 
@@ -248,15 +248,30 @@ double fitfunc(double weights[DATASIZE], int its) {
         // Implementing Ziegler–Nichols method for PID controller
         // Ku .. ultimate gain
         // Pu .. oscillation period
-        Kp = 0.60*weights[NB_SENSOR+4];  // 0.6 * Ku
-        Kd = 2*Kp/weights[NB_SENSOR+5];  // 2 * Kp / Pu
-        Ki = Kp*weights[NB_SENSOR+5]/8;  // Kp * Pu / 8
+        // Kp = 0.60*weights[NB_SENSOR+4];  // 0.6 * Ku
+        // Kd = 2*Kp/weights[NB_SENSOR+5];  // 2 * Kp / Pu
+        // Ki = Kp*weights[NB_SENSOR+5]/8;  // Kp * Pu / 8
 
-        pid_distance_error = MIN_DISTANCE - distance;
-        pid_distance_integral = pid_distance_integral + pid_distance_error*dt;
-        pid_distance_derivative = (pid_distance_error - pid_distance_prev_error)/dt;
+        Kp = weights[NB_SENSOR+4];
+        Kd = weights[NB_SENSOR+5];
+        Ki = weights[NB_SENSOR+6];
+
+        if (distance < MAX_DISTANCE) {
+            pid_distance_error = MIN_DISTANCE - distance;
+            pid_distance_integral = pid_distance_integral + pid_distance_error*dt;
+            pid_distance_derivative = (pid_distance_error - pid_distance_prev_error)/dt;
+        }
+        else {
+            // Reset the PID Terms
+            pid_distance_error = 0;
+            pid_distance_integral = 0;
+            pid_distance_derivative = 0;
+        }
+
         pid_distance = Kp*pid_distance_error + Ki*pid_distance_integral + Kd*pid_distance_derivative;
         pid_distance_prev_error = pid_distance_error;
+
+        // printf("PID distance: %.2f differential: %.2f integral: %.2f\n", pid_distance_error, pid_distance_derivative, pid_distance_integral);
 
         // printf("PID Distance: %.2f\n", pid_distance);
 
@@ -377,12 +392,10 @@ double fitfunc(double weights[DATASIZE], int its) {
     int A=10; // importance coefficient of range
     int B=1; // importance coefficient of bearing
     int C=6; // importance coefficient of relative heading
-    int D=0; // importance of penalty
 
     // What about negative fitness?
     // shouldnt we calculate just positive ones?
-    double inverseFitness = A*fit_range + B*fabs(fit_bearing) + C*fabs(fit_relative_heading) + D*penalty;
-
+    double inverseFitness = A*fabs(fit_range-MIN_DISTANCE) + B*fabs(fit_bearing) + C*fabs(fit_relative_heading);
     if (inverseFitness == 0) {
         fitness = 100;
         printf("All zero\n");
