@@ -1,6 +1,21 @@
+AVD_STEPS	main.c	28
 MAX_ACC	main.c	19
 MAX_SPEED	main.c	18
 Mmain	main.c	/^int main() {$/
+RND_MAX_SPEED	main.c	24
+RND_MIN_SPEED	main.c	23
+RND_NEW_WEIGHT	main.c	22
+RND_OLD_WEIGHT	main.c	21
+SENSOR_THRESHOLD	main.c	29
+SESOR_BIAS	main.c	30
+STATE	main.c	36
+STATE_DETERMINISTIC	main.c	32
+STATE_OBSTACLE	main.c	34
+STATE_RANDOM	main.c	33
+TRAJ_LEN	main.c	26
+TRAJ_STEPS	main.c	27
 rnd	main.c	/^double rnd() {$/
 unf	main.c	/^double unf(double min, double max) {$/
 wait	main.c	/^void wait(unsigned long num) {$/
+weightleft	main.c	52
+weightright	main.c	53
