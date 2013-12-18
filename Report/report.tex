@@ -137,7 +137,7 @@ There are three followers having the same code. The role of a follower is to eva
       \includegraphics[width = 0.5\textwidth]{images/NNsimplified.png}
       \caption{The simplified neural network (the nodes and links that are greyed are not included on the PSO).}
       \label{fig:nnsimplified}
-   \end{figure}
+\end{figure}
 
 The Braitenberg-type controller is a simple neural network consisting of two neurons corresponding to the wheel motors of the e-puck. As input nodes, the neural network uses the infra-red sensors of the e-puck  and a bias. The outputs are the motor commands of the two wheels. The outputs are also cross-coupled and fed back to their neuron. The complexity of the controller is reduced using symmetry. Indeed, the same weights can be used for the bias, cross-coupling and auto-coupling of both nodes and the weights corresponding to the opposite sensors can be used for the neuron corresponding to the opposite wheel. Moreover, the back sensors can be ignored as they do not play a role in a following behavior. Thus, the number of weights of the controller is reduced to nine: six for the infra-red sensors, one for the bias, one for the cross coupling and one for the auto-coupling.\\
 The infra-red sensor values measured in webots were calibrated in order to be close those obtained on the real e-pucks in the chosen lighting conditions. This can be done by updating the lookup tables in webots, which then maps distance to sensor values by linear extrapolation between the inserted data. In order to improve the Braitenberg controller, it was decided to linearise the input by mapping the sensor values back to distance before using them. In order to do this, the inverse function of an exponential regression through the data was used. This improves the quality of the controller because it avoids the exponential increase of the stimulus when the follower gets close to the robot, which makes the response smoother, and it increases the stimulus with distance instead of decreasing it, which makes following easier.\\
@@ -167,7 +167,8 @@ The obtained results could not be improved by applying a global neighbourhood wi
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}
-trajectories and iterations
+The best weights in Webots were obtained running a noisy PSO on a random leader trajectory with random acceleration (180 iterations). These weights are $-24.45, 4.96, 1.69, -0.43, 5.70, 100.01, 56.63, -71.26$ and $17.65$, where the first 6 correspond to the proximity sensors, 7 to the BIAS and 8 and 9 to the recursive connections. Applying these weights to the epuck immediately gave a good chain following behaviour.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions}
 
