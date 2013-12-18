@@ -134,12 +134,15 @@ One last step is done before sending the speed commands to the wheel motors: ver
 \subsubsection{Leader}
 
 \subsection{PSO characteristics and Optimization}
-swarmsize, neigborhoods, iterations, initial weights etc.
+
+To get started with the PSO and to examine and understand the behaviour of the robots in Webots and the fitness function we initially started the  noiseless PSO with 10 iterations and 30 fitness steps, to keep the overall simulation time short in the beginning. The leader moved deterministically on a single curve.  Because of this short simulation interval the first optimization results lead to useless controller weights. The only goal in this first step was to examine the quality of the designed fitness function and to test the design of the symmetric controller weights.
+
+To get useful results we extended the number of fitness steps per iteration to 65. The trajectory of the leader was still deterministic, but it consisted of two opposite curves and a straight part in between. The velocity of the leader was constant. After evolving the PSO several times with random initial particles and velocities we observed a big variance in the quality of the results. So we tried to improve the quality of the PSO with implementing bounded constraints for the PSO \cite{c1}. With initially starting an iteration of the optimization with the last best solution we could achieve better results in less number of iterations compared to random initialization of particles. Increasing the number of PSO iterations to 40 extended the overall optimization time, but lead to useful results after each optimization. After the implementation of a function, that stored the best controller weights to a file, if they were better than the previous best, we could run the optimization with 60 PSO iterations and with good initially particles in an infinite loop over the night.
+
+swarmsize, neigborhoods
 optiomize the fitness etc noise resistant
 no penalty fo rmax speed etc
 bearing more important... ABCD
-
-
 
 
    \begin{figure}[thpb]
@@ -163,7 +166,8 @@ The authors would like to thank Alcherio Martinoli for giving the course, Milos 
 \begin{thebibliography}{99}
 
 \bibitem{c1}
-J.G.F. Francis, The QR Transformation I, {\it Comput. J.}, vol. 4, 1961, pp 265-271.
+E.F. Campana, M. Diez, G. Fasano and D. Peri, "Initial Particles Position for PSO,
+in Bound Constrained Optimization" in Advances in Swarm Intelligence, {\it 4th International Conference, ICSI 2013; Harbin, China, June 2013; Proceedings, Part I}, Springer-Verlag Berlin Heidelberg, 2013, pp 112-119.
 
 \bibitem{c2}
 H. Kwakernaak and R. Sivan, {\it Modern Signals and Systems}, Prentice Hall, Englewood Cliffs, NJ; 1991.
