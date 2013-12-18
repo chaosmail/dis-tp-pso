@@ -24,7 +24,6 @@
 *.gz
 *.log
 *.aux
-*.cls
 
 # Labs
 lab06/
