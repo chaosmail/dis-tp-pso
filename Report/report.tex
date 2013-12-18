@@ -28,21 +28,6 @@
 Learning a `following and chain-building' behavior using PSO
 }
 
-%\author{ \parbox{3 in}{\centering Huibert Kwakernaak*
-%         \thanks{*Use the $\backslash$thanks command to put information here}\\
-%         Faculty of Electrical Engineering, Mathematics and Computer Science\\
-%         University of Twente\\
-%         7500 AE Enschede, The Netherlands\\
-%         {\tt\small h.kwakernaak@autsubmit.com}}
-%         \hspace*{ 0.5 in}
-%         \parbox{3 in}{ \centering Pradeep Misra**
-%         \thanks{**The footnote marks may be inserted manually}\\
-%        Department of Electrical Engineering \\
-%         Wright State University\\
-%         Dayton, OH 45435, USA\\
-%         {\tt\small pmisra@cs.wright.edu}}
-%}
-
 \author{Alice Concordel$^{1}$, Christoph K\"{o}rner$^{2}$ and Etienne Thalmann$^{3}$% <-this % stops a space
 \thanks{This work is a project of the course Distributed intelligent systems by Prof. Alcherio Martinoli}% <-this % stops a space
 \thanks{A. Concordel is with Faculty of Mechanical Engineering, School of engineering, Ecole Polytechnique fédérale de Lausanne}
@@ -91,29 +76,6 @@ F=\frac{1}{A \cdot d+B \cdot \theta+C \cdot \Delta \phi+D \cdot \Delta v}
 Where A,B,C,D are coefficients of importance of the different components that are initially set to one and have to be determined.
 
 \section{Methodology}
-
-%\begin{table}
-%\caption{An Example of a Table}
-%\label{table_example}
-%\begin{center}
-%\begin{tabular}{|c||c|}
-%\hline
-%One & Two\\
-%\hline
-%Three & Four\\
-%\hline
-%\end{tabular}
-%\end{center}
-%\end{table}
-
-
-
-\addtolength{\textheight}{-3cm}   % This command serves to balance the column lengths
-                                  % on the last page of the document manually. It shortens
-                                  % the textheight of the last page by a suitable amount.
-                                  % This command does not take effect until the next page
-                                  % so it should come on the page before the last. Make
-                                  % sure that you do not shorten the textheight too much.
                                   
 \subsection{Implementation on Webots}
 
@@ -169,6 +131,13 @@ Thus it is important to test the controller on a varied trajectory, containing b
 
 So a random, longer trajectory was preferred. At first, random speeds were assigned to the wheels for given time intervals. However, this will give a rather erratic movement. It was optimized such that the new speed of wheel should be 0.4 times the old speed plus 0.6 times a new random speed value (within the wheel command values interval). This gives the leader a smoother and more realistic trajectory.
 
+\addtolength{\textheight}{-3cm}   % This command serves to balance the column lengths
+                                  % on the last page of the document manually. It shortens
+                                  % the textheight of the last page by a suitable amount.
+                                  % This command does not take effect until the next page
+                                  % so it should come on the page before the last. Make
+                                  % sure that you do not shorten the textheight too much.
+
 \subsection{PSO characteristics and Optimization}
 
 To get started with the PSO and to understand the behaviour of the robots in Webots as well as the fitness function, we initially started the noiseless PSO with 10 iterations and 30 fitness steps. This way, the overall simulation time was kept short in the beginning. The weights of attraction to personal best and neighbourhood's best solution were set equal. The leader motion was deterministic and consisted in a single curve.  Because of this short simulation interval and the leader turning only one way, the first optimization results lead to useless controller weights. The only goal in this first step was to examine the quality of the designed fitness function and to test the design of the symmetric controller weights.
@@ -203,7 +172,7 @@ A solution to remove the oscillations would be an implementation of a hysteresis
 \section{Conclusions}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{ACKNOWLEDGMENTS}
+\section{Acknowledgements}
 The authors would like to thank Alcherio Martinoli for an exciting and challenging course. Special thanks also to Milos Vasic, for his precious advice and support, as well as all the other teaching assistants of the course for their work throughout the semester.
 
 \begin{thebibliography}{99}
