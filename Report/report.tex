@@ -156,7 +156,15 @@ The infra-red sensor values measured in Webots were calibrated in order to be cl
       \label{fig:regression}
 \end{figure}
 
-The output values computed by the Braitenberg controller are transformed into coherent speed values before being sent to the wheels. This is done by mapping the values between -1 and 1 before multiplying them by the maximum speed that the e-pucks can reach. The threshold upon which the speed is set to maximum speed (or minimum speed by taking the negative of the threshold) is set arbitrarily by looking at the range of values returned by the controller.
+The output values computed by the Braitenberg controller are transformed into coherent speed values before being sent to the wheels. This is done by mapping the values between -1 and 1 before multiplying them by the maximum speed that the e-pucks can reach. The threshold upon which the speed is set to maximum speed (or minimum speed by taking the negative of the threshold) is set arbitrarily by looking at the range of values returned by the controller. It can be seen schematically in figure \ref{fig:threshold}
+
+\begin{figure}[thpb]
+      \centering
+      \includegraphics[width = 0.5\textwidth]{images/threshold.pdf}
+      \caption{Threshold for the speed to be sent to the wheels.}
+      \label{fig:threshold}
+\end{figure}
+
 One last step is done before sending the speed commands to the wheel motors: verifying that the acceleration does not exceed a maximum value. This is done looking at the difference between the new speed and the one of the previous time step. If the difference is larger than the defined maximum acceleration for the e-pucks, the speed corresponding to this maximum value is set.
 
 \paragraph{Fitness evaluation}
@@ -193,17 +201,17 @@ F=\frac{1}{10 \cdot d+1 \cdot \theta+6 \cdot \Delta \phi}
 To test the weights obtained, the same Braitenberg controller as the one used in Webots was implemented on the e-pucks. Then the weights that returned the best performance in the PSO were given to the controller. For the leader, a random movement coupled with obstacle avoidance was loaded onto the leader in order to test the solution on a test table without the robot getting stuck or wandering too far.
 
 \subsection{Limitations}
-The solution found has some drawbacks. Due to the nature of the neural network, the robots do not stop at a distance from the leader. Instead they move toward it until they touch it and begin to push gently. Just one follower cannot push hard enough to make the leader move, however, the sum of forces from the chain of three robots can cause the leader to slip forward, thus affecting the leader's trajectory.
+The solution found has some drawbacks. Due to the nature of the neural network, the robots do not stop at defined distance from the leader. Instead they move toward it until they touch it and begin to push gently. Just one single follower cannot push hard enough to make the leader move, however, the sum of forces from the chain of three robots can cause the leader to slip forward, thus affecting the leader's trajectory.
 
-To correct this, a rule could be implemented with a threshold on the smallest distance seen by the sensors, causing it to stop if it is below the desired distance between robots. This was tested, but it creates an oscillating jerky movement of the followers. 
+To correct this, an additionally rule based algorithm could be implemented, which uses a threshold on the smallest distance measured by all of the sensors and causing it to stop, if it is below the defined distance. This was tested in the webots simulation, but it creates an oscillating jerky movement of the followers, that is caused by the abrupt changes in acceleration and propagated with a delay through the chain of followers. 
 
-A solution to decrease the oscillations would be to implement a hysteresis on the threshold, or a PID on the detected distance. The latter was tested, but the sensor values are too noisy and the integrator wound up quite a lot. 
+A solution to remove the oscillations would be an implementation of a hysteresis on the threshold, or a PID controller on the detected distance (in the test $1cm$). A simple weighted PID controller, that minimized the error to the defined distance was tested without success. After correcting the range in the fitness function with the defined distance the PSO evolved a weight near to zero for the PID controller, because the controller was breaking the chain following behaviour, when it tried to keep the defined distance between leader and follower. While setting a higher weight manually to the PID controller we observed, that the distance was kept, but the chain broke easily. By setting a distance smaller than $1cm$ or implementing multiple PID controllers for each sensor, the controller could be used in this application.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{ACKNOWLEDGMENTS}
+\section{Acknowledgements}
 The authors would like to thank Alcherio Martinoli for an exciting and challenging course. Special thanks also to Milos Vasic, for his precious advice and support, as well as all the other teaching assistants of the course for their work throughout the semester.
 
 \begin{thebibliography}{99}
