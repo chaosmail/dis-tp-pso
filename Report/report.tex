@@ -120,7 +120,12 @@ Where A,B,C,D are coefficients of importance of the different components that ar
 
 \subsubsection{Environment}
 The Webots environment used to simulate the following and chain building consists of one leader e-puck and three followers on a smooth ground free of walls or any obstacles. They followers are initially placed in line behind the leader with a distance of 10 cm between their centres and facing the same way. A supervisor, which is a special kind of robot with more functions, is used to run the PSO algorithm, track the position of the robots, communicate with them and reset their position.
-
+\begin{figure}[thpb]
+      \centering
+      \includegraphics[width = 0.5\textwidth]{images/Initial_positions.PNG}
+      \caption{Initial chain positions of the robots in the webots environment.}
+      \label{fig:initial_pos}
+\end{figure}
 \subsubsection{Supervisor}
 The role of the supervisor is to set the initial settings and then to run the PSO. In short, it sends the particles to the followers for their evaluation, gets their fitness back, evolves the swarm and restarts an iteration. After running one full PSO, it uses the best results for the next one and so on until results are satisfying.\\
 The number of particles in the swarm is set higher than the number of followers. Since the approach is heterogeneous, the supervisor evaluates them in batches of three by sending one particle (i.e. one set of weights for their Braitenberg controller) to each follower. Then comes the evaluation period during which the followers evaluate the fitness of the controller. To evaluate the fitness of its run according to equation \ref{fitness}, the follower needs to know its coordinates and those of the robot it is following. Thus, while the followers are doing their evaluation run, the supervisor is sending the spatial coordinates (translation and rotation) of the respective leader in the follower's coordinate system to each follower. Once the fitness of each particles is evaluated, it is returned to the supervisor and stored. The supervisor resets the followers and the leader in their initial position and replicates the previous procedure with the following batch of particles. Once all the particles of the swarm have been evaluated, they evolve according to the PSO algorithm using the fitness values obtained for each particle. The new swarm obtained is evaluated  and evolved in the same way as the previous swarm. The number of these evolution iterations is set beforehand.\\
