@@ -2,9 +2,9 @@
 %2345678901234567890123456789012345678901234567890123456789012345678901234567890
 %        1         2         3         4         5         6         7         8
 
-\documentclass[a4, 10 pt, conference]{ieeeconf}  % Comment this line out
+%\documentclass[letter, 10 pt, conference]{ieeeconf}  % Comment this line out
                                                           % if you need a4paper
-%\documentclass[a4paper, 10pt, conference]{ieeeconf}      % Use this line for a4
+\documentclass[a4paper, 10pt, conference]{ieeeconf}      % Use this line for a4
                                                           % paper
 
 \IEEEoverridecommandlockouts                              % This command is only
@@ -66,11 +66,16 @@ Learning a `following and chain-building' behavior using PSO
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{INTRODUCTION}
-The goal of this project is to implement a Braitenberg-type controller for movement in formation on e-pucks. For this, a PSO algorithm was implemented, using the weights of the Braitenberg-type controller as a search space. The formation consists of 3 follower robots and one leader that moves with a predefined trajectory. The PSO is run on the Webots platform, which is capable of simulating the behavior of the e-pucks in a realistic way. This makes it possible to run the algorithm and get results much faster than doing it on real e-pucks.
+The goal of this project is to implement a Braitenberg-type controller for movement in formation on e-pucks. For this, a PSO algorithm was implemented, using the weights of the Braitenberg-type controller as a search space. The formation consists of 3 follower robots and one leader that moves with a predefined trajectory, unknown at the time of development. The PSO is run on the Webots platform, which is capable of simulating the behaviour of the e-pucks in a realistic way. This makes it possible to run the algorithm and get results much faster than on real e-pucks.
 
-\subsection{Design of PSO}
-In order to design a PSO algorithm for a collaborative task, we had to consider three axes: The diversity of the team, the performance evaluation and the solution sharing. We decided  to use a heterogeneous approach with individual performance evaluation and group solution sharing. The idea is to evaluate different solutions on the three followers (heterogenous approach) in order to save computation time and to share the pool of solutions (group solution) to have evolution of the particles. Since we are interested in the performance of each follower with its own particle and not in the performance of the entire chain we need an individual performance evaluation.
+\subsection{Design of the PSO}
+In order to design a PSO algorithm for a collaborative task, it is necessary to consider three axes: the diversity of the team, the performance evaluation and the solution sharing. It was decided  to use a heterogeneous approach with individual performance evaluation and group solution sharing. 
 
+The idea is to evaluate different solutions on the three followers (heterogeneous approach) in order to save computation time. For each robot, the previous one acts as leader thus the problem is decomposed into three similar parts. Another option would have been to run the simulations with only one robot following a leader but the results would have been similar to the used approach. The difference would be that if following a follower with a controller which causes it to have a very erratic or fast movement, then the evaluation would not be quite fair as opposed to that on a robot following the leader with a more reasonable trajectory.
+
+The pool of solutions is shared (group solution) because the situations are similar, with leader-follower couples and thus testing a particle in each position of the chain will give similar results.
+
+Finally, since the performance of each follower is what is aimed,with its own particle and not in the performance of the entire chain it is logical to use an individual performance evaluation.
 
 \subsection{Design of Fitness Function}
 The idea of the fitness function is to evaluate the performance of a controller in being able to follow a leader and stay in chain formation. The design of the fitness function is of primary importance because it defines towards which solution the PSO will converge. Four characteristics were found to be important to evaluate following and chain-building behavior:
