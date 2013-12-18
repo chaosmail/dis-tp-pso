@@ -143,7 +143,7 @@ There are three followers having the same code. The role of a follower is to eva
       \label{fig:nnsimplified}
 \end{figure}
 
-The Braitenberg-type controller is a simple neural network consisting of two neurons corresponding to the wheel motors of the e-puck. As input nodes, the neural network uses the infra-red sensors of the e-puck  and a bias. The outputs are the motor commands of the two wheels. The outputs are also cross-coupled and fed back to their neuron. The complexity of the controller is reduced using symmetry. Indeed, the same weights can be used for the bias, cross-coupling and auto-coupling of both nodes and the weights corresponding to the opposite sensors can be used for the neuron corresponding to the opposite wheel. Moreover, the back sensors can be ignored as they do not play a role in a following behavior. Thus, the number of weights of the controller is reduced to nine: six for the infra-red sensors, one for the bias, one for the cross coupling and one for the auto-coupling.This can be seen in figure \ref{fig:nnsimplified}\\
+The Braitenberg-type controller is a simple neural network consisting of two neurons corresponding to the wheel motors of the e-puck \cite{c4}. As input nodes, the neural network uses the infra-red sensors of the e-puck  and a bias \cite{c3}. The outputs are the motor commands of the two wheels. The outputs are also cross-coupled and fed back to their neuron. The complexity of the controller is reduced using symmetry. Indeed, the same weights can be used for the bias, cross-coupling and auto-coupling of both nodes and the weights corresponding to the opposite sensors can be used for the neuron corresponding to the opposite wheel. Moreover, the back sensors can be ignored as they do not play a role in a following behavior. Thus, the number of weights of the controller is reduced to nine: six for the infra-red sensors, one for the bias, one for the cross coupling and one for the auto-coupling.This can be seen in figure \ref{fig:nnsimplified}\\
 The infra-red sensor values measured in Webots were calibrated in order to be close those obtained on the real e-pucks under lighting conditions similar to the testing environment. This can be done by updating the lookup tables in Webots, which then maps distance to sensor values by linear extrapolation between the inserted data. In order to improve the Braitenberg controller, it was decided to linearise the input by mapping the sensor values back to distance before using them. In order to do this, the inverse function of an exponential regression through the data was used, as seen in figure \ref{fig:regression}. This improves the quality of the controller because it avoids the exponential increase of the stimulus when the follower gets close to the robot, which makes the response smoother, and it increases the stimulus with distance instead of decreasing it, which makes following easier.\\
 
 
@@ -209,6 +209,13 @@ The authors would like to thank Alcherio Martinoli for an exciting and challengi
 \begin{thebibliography}{99}
 \bibitem{c2}
 R. Poli, J. Kennedy,T. Blackwell, "Particle swarm optimization, An overview" in Swarm Intell (2007) 1, Springer Science + Busines Media, 2007, pp 33-57
+
+\bibitem{c4}
+J. Pugh et al., "Particle swarm optimization for unsupervised robotic learning", \textit{Swarm Intelligence Symposium, 2005}, IEEE, 2005, pp 92-99
+
+
+\bibitem{c3}
+Mondada et al., "The e-puck, a Robot Designed for Education in Engineering" in Proceedings of the 9th Conference on Autonomous Robot Systems and Competitions, IPCB, 2009, pp 59-65 
 
 \bibitem{c1}
 E.F. Campana, M. Diez, G. Fasano and D. Peri, "Initial Particles Position for PSO,
