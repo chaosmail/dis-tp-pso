@@ -86,7 +86,7 @@ The idea of the fitness function is to evaluate the performance of a controller 
 \end{itemize}
 The fitness function has to be maximized. We define it as follows:
 \begin{equation}\label{fitness}
-F=\frac{1}{A \cdot d+B \cdot \theta+C \cdot \Delta \phi+C \cdot \Delta v}
+F=\frac{1}{A \cdot d+B \cdot \theta+C \cdot \Delta \phi+D \cdot \Delta v}
 \end{equation}
 Where A,B,C,D are coefficients of importance of the different components that are initially set to one and have to be determined.
 
@@ -178,6 +178,13 @@ To get useful results we extended the number of fitness evaluation steps per ite
 In the next step, we extended the follower model to have a more realistic behaviour. Therefore we added noisy nonlinear sensor values for the proximity sensors of the e-pucks. We configured the PSO to be noise-resistant, which consists in re-evaluating the best performance of a PSO iteration. This results in doubling the number of iterations per optimization step. We also complicated the leaders behaviour, such that the trajectory is random and 180 simulation steps long. We seeded the random number generator with the actual time stamp to get different random values for each optimization but with giving up reproducibility of the solutions. For the overnight simulation, we started one PSO with good initial weights and random velocities and another one with random particles and random velocities. The performance for the optimization with initial particles was nearly twice as good as the one with initial random particles.
 
 The obtained results could not be improved by using a random local neighbourhood and increasing the weight of attraction towards the neighbourhood's best solution.
+
+\subsection{Fitness function Optimization}
+After the first results from the PSO, we could tune the fitness function (equation \ref{fitness}) and the different weights of the parameters. First the minimization of the relative speed between leader and follower was dropped from the design, because this would need to compare the changing of the positions over time. To keep the fitness function simple and to not compare differences in positions over time we decided to just stick to minimization of range, relative heading and bearing between leader and follower. With the tuning of these parameters gave to good results of the PSO in the simulation. With the greatest importance on minimizing the range, the following final fitness function was developed.
+\begin{equation}\label{fitness}
+F=\frac{1}{10 \cdot d+1 \cdot \theta+6 \cdot \Delta \phi}
+\end{equation}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}
