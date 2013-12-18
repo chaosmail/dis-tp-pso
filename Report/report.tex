@@ -25,7 +25,7 @@
 %\usepackage{amssymb}  % assumes amsmath package installed
 
 \title{\LARGE \bf
-Learning a ‘following and chain-building’ behavior using PSO
+Learning a `following and chain-building' behavior using PSO
 }
 
 %\author{ \parbox{3 in}{\centering Huibert Kwakernaak*
@@ -118,8 +118,8 @@ The Webots environment used to simulate the following and chain building consist
 
 \subsubsection{Supervisor}
 The role of the supervisor is to set the initial settings and then to run the PSO. In short, it sends the particles to the followers for their evaluation, gets their fitness back, evolves the swarm and restarts an iteration. After running one full PSO, it uses the best results for the next one and so on until results are satisfying.\\
-The number of particles in the swarm is set higher than the number of followers. Since the approach is heterogeneous, the supervisor evaluates them in batches of three by sending one particle (i.e. one set of weights for their Braitenberg controller) to each follower. Then comes the evaluation period during which the followers evaluate the fitness of the controller. To evaluate the fitness of its run according to equation \ref{fitness}, the follower needs to know its coordinates and those of the robot it is following. Thus, while the followers are doing their evaluation run, the supervisor sends to the followers their spatial coordinates (translation and roatation) and those of their respective leader. Once the fitness of each particles is evaluated, it is returned to the supervisor and stored. The supervisor resets the followers and the leader in their initial position and replicates the previous procedure with the following batch of particles. Once all the particles of the swarm have been evaluated, they evolve according to the PSO algorithm using the fitness values obtained for each particle. The new swarm obtained is evaluated  and evolved in the same way as the previous swarm. The number of these evolution iterations is set beforehand.\\
-When the last iteration is over, the weights of the particle that returned the best fitness during this run of the PSO are tested by sending them to the followers a chosen number of times and measuring the average fitness of the solution. If the results are better than the previous best, the solution is stored in a text file and set as initial weights for the next PSO run. The entire PSO algorithm is run again like the previous one, each particle being initialized with the best weights so far. This higher level of iterations is run as long as needed to get satisfying results. The weights that had the best fitness evaluation can be extracted from the text file and implemented on the real epucks.\\
+The number of particles in the swarm is set higher than the number of followers. Since the approach is heterogeneous, the supervisor evaluates them in batches of three by sending one particle (i.e. one set of weights for their Braitenberg controller) to each follower. Then comes the evaluation period during which the followers evaluate the fitness of the controller. To evaluate the fitness of its run according to equation \ref{fitness}, the follower needs to know its coordinates and those of the robot it is following. Thus, while the followers are doing their evaluation run, the supervisor sends to the followers their spatial coordinates (translation and rotation) and those of their respective leader. Once the fitness of each particles is evaluated, it is returned to the supervisor and stored. The supervisor resets the followers and the leader in their initial position and replicates the previous procedure with the following batch of particles. Once all the particles of the swarm have been evaluated, they evolve according to the PSO algorithm using the fitness values obtained for each particle. The new swarm obtained is evaluated  and evolved in the same way as the previous swarm. The number of these evolution iterations is set beforehand.\\
+When the last iteration is over, the weights of the particle that returned the best fitness during this run of the PSO are tested by sending them to the followers a chosen number of times and measuring the average fitness of the solution. If the results are better than the previous best, the solution is stored in a text file and set as initial weights for the next PSO run. The entire PSO algorithm is run again like the previous one, each particle being initialized with the best weights so far. This higher level of iterations is run as long as needed to get satisfying results. The weights that had the best fitness evaluation can be extracted from the text file and implemented on the real e-pucks.\\
 The supervisor also communicates in a unilateral way with the leader, sending an interruption message every time the positions are reset. The purpose of this is that the leader restarts its trajectory, so as to have always the same trajectory in the case of predefined ones. This was needed at the beginning of the evolutions in order to have all the particles evaluated on a trajectory having the same level of difficulty. This way, weights that are worse than others cannot have a better fitness evaluation just because the trajectory was easier, which would be counter productive.
 
 \subsubsection{Follower}
@@ -141,7 +141,13 @@ One last step is done before sending the speed commands to the wheel motors: ver
 \paragraph{Fitness evaluation}
 
 \subsubsection{Leader}
-The formation performance is strongly dependant on the leader behaviour. It is therefore critical to control this to ensure that the solution obtained is robust. For example, if the leader goes straight forward, then a controller with strong bias and almost no coupling from the sensors will have a good fitness. However, if this controller is then tested with a leader that turns, then it will be lost.
+The formation performance is strongly dependant on the leader behaviour. It is therefore critical to control this to ensure that the solution obtained is robust. For example, if the leader goes straight forward, then a controller with strong bias and almost no coupling from the sensors will have a good fitness. However, if this controller is then tested with a leader that turns, then the followers will be lost. 
+
+Thus it is important to test the controller on a varied trajectory, containing both left and right turns. A random trajectory will be good for this, but will require a longer evaluation time to ensure that a sufficient variety is obtained. For this reason, the first runs of the PSO (to test its performances and tune its parameters) were run with a predefined trajectory, including a soft turn to the right, then the corresponding turn to the left which brought the robot's heading back to its initial value. The benefit is that all of the parameters acting in the fitness function appear in a short time span, making runs faster. This turned out to be very effective for debugging: the trajectory being the same, the consistency of the fitness values returned was much easier to check. However, this could not be used to evolve the final solution as it would be limited to similar movements of the leader.
+
+So a random, longer trajectory was preferred. At first, random speeds were assigned to the wheels for given time intervals. However, this will give a rather erratic movement. It was optimized such that the new speed of wheel should be 0.4 times the old speed plus 0.6 times a new random speed value (within the wheel command values interval).
+
+Finally, for the testing of the real solution in a small arena, a random movement coupled with obstacle avoidance was loaded onto the leader in order to avoid the robot wandering too far or falling off the test table.
 
 \subsection{PSO characteristics and Optimization}
 
@@ -165,7 +171,7 @@ trajectories and iterations
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{ACKNOWLEDGMENTS}
-The authors would like to thank Alcherio Martinoli for giving the course, Milos Vasic, for his precious advice and support, as well as all the other teaching assistants.
+The authors would like to thank Alcherio Martinoli for an exciting and challenging course. Special thanks also to Milos Vasic, for his precious advice and support, as well as all the other teaching assistants of the course for their work throughout the semester.
 
 \begin{thebibliography}{99}
 
