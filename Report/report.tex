@@ -60,12 +60,11 @@ Learning a `following and chain-building' behavior using PSO
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
 
-
 \end{abstract}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{INTRODUCTION}
+\section{Introduction}
 The goal of this project is to implement a Braitenberg-type controller for movement in formation on e-pucks. For this, a PSO algorithm was implemented, using the weights of the Braitenberg-type controller as a search space. The formation consists of 3 follower robots and one leader that moves with a predefined trajectory, unknown at the time of development. The PSO is run on the Webots platform, which is capable of simulating the behaviour of the e-pucks in a realistic way. This makes it possible to run the algorithm and get results much faster than on real e-pucks.
 
 \subsection{Design of the PSO}
@@ -87,7 +86,7 @@ The idea of the fitness function is to evaluate the performance of a controller 
 \end{itemize}
 The fitness function has to be maximized. We define it as follows:
 \begin{equation}\label{fitness}
-F=\frac{1}{A*d+B*\theta+C*\Delta \phi+C* \Delta v}
+F=\frac{1}{A \cdot d+B \cdot \theta+C \cdot \Delta \phi+C \cdot \Delta v}
 \end{equation}
 Where A,B,C,D are coefficients of importance of the different components that are initially set to one and have to be determined.
 
