@@ -17,7 +17,7 @@
 
 
 % The following packages can be found on http:\\www.ctan.org
-%\usepackage{graphics} % for pdf, bitmapped graphics files
+\usepackage{graphicx} % for pdf, bitmapped graphics files
 %\usepackage{epsfig} % for postscript graphics files
 %\usepackage{mathptmx} % assumes new font selection scheme installed
 %\usepackage{times} % assumes new font selection scheme installed
@@ -66,7 +66,7 @@ Learning a ‘following and chain-building’ behavior using PSO
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{INTRODUCTION}
-The goal of this project is to implement a Braitenberg-type controller for movement in formation on e-pucks. For this, a PSO algorithm was implemented, using the weights of the Braitenberg-type controller as a search space. The formation consists of 3 follower robots and one that moves with a predefined trajectory. The PSO is run on the Webots platform, which is capable of simulating the behavior of the e-pucks in a realistic way. This makes it possible to run the algorithm and get results much faster than doing it on real e-pucks.
+The goal of this project is to implement a Braitenberg-type controller for movement in formation on e-pucks. For this, a PSO algorithm was implemented, using the weights of the Braitenberg-type controller as a search space. The formation consists of 3 follower robots and one leader that moves with a predefined trajectory. The PSO is run on the Webots platform, which is capable of simulating the behavior of the e-pucks in a realistic way. This makes it possible to run the algorithm and get results much faster than doing it on real e-pucks.
 
 \subsection{Design of PSO}
 In order to design a PSO algorithm for a collaborative task, we had to consider three axes: The diversity of the team, the performance evaluation and the solution sharing. We decided  to use a heterogeneous approach with individual performance evaluation and group solution sharing. The idea is to evaluate different solutions on the three followers (heterogenous approach) in order to save computation time and to share the pool of solutions (group solution) to have evolution of the particles. Since we are interested in the performance of each follower with its own particle and not in the performance of the entire chain we need an individual performance evaluation.
