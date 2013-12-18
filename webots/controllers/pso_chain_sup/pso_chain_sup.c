@@ -51,7 +51,6 @@
 /********** Global vars **********/
 
 // Needed for localisation
-// static WbNodeRef robs[ROBOTS];
 static WbNodeRef robs[ROBOTS+1]; 
 static WbFieldRef robs_translation[ROBOTS+1];
 static WbFieldRef robs_rotation[ROBOTS+1];
@@ -413,15 +412,6 @@ void calc_fitness(double weights[ROBOTS][DATASIZE], double fit[ROBOTS], int its,
                     cnt = 0;
                 }
 
-                //wait 1 timestep? Does the buffer of the emmited message pile up??
-
-                // Check error in position of robot
-                //rel_x = global_x*cos(loc[0][3]) - global_z*sin(loc[0][3]);
-                //rel_z = -global_x*sin(loc[0][3]) - global_z*cos(loc[0][3]);
-                //temp_err = sqrt(pow(rel_x-good_rp[i][0],2) + pow(rel_z-good_rp[i][1],2));
-                //if (print_enabled)
-                //  printf("Err %d: %.3f, ",i,temp_err);
-                //err += temp_err/ROBOTS;
                 cnt++;
             }
             wb_robot_step(64);
@@ -431,15 +421,7 @@ void calc_fitness(double weights[ROBOTS][DATASIZE], double fit[ROBOTS], int its,
         for (i=0;i<numRobs;i++) {
 
             rbuffer = (double *)wb_receiver_get_data(rec[i]);
-            
-            /*if (i==2) {
-                fit[i] += rbuffer[0];
-                //printf("fit %f",fit[i]);
-            }
-            else {*/
-                fit[i] += rbuffer[0];
-            //}
-
+            fit[i] += rbuffer[0];
             //printf("received fitness: %0.2f\n",rbuffer[0]);
             wb_receiver_next_packet(rec[i]);
         }

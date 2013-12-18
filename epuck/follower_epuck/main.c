@@ -62,13 +62,10 @@ double getRealSpeed(double val){
 // Main program
 int main() {
 	char buffer[80];
-	//int leftwheel, rightwheel;
-	//int sensor[8], value;
 	
 	
 	double left_speed,right_speed; // Wheel speeds
 	double old_left, old_right; // Previous wheel speeds (for recursion)
-	//int left_encoder,right_encoder;
 	double ds_value[NB_ALL_SENSOR];
 	int i; // Loop vars
 
@@ -87,7 +84,6 @@ int main() {
 		__asm__ volatile ("reset");
 	}
 
-	// Say hello
 	// You'll receive these messages in Minicom. They are therefore well suited for debugging.
 	// Note, however, that sending such messages is time-consuming and can slow down your program significantly.
 	sprintf(buffer, "Braitenberg starting\r\n");
@@ -95,15 +91,10 @@ int main() {
 
 	// Run the braitenberg algorithm
 	while (1) {
-		/*// Forward speed
-		leftwheel = 200;
-		rightwheel = 200;*/
-
+		
 		// Get sensor values
 		for (i = 0; i < 8; i++) {
 			ds_value[i] = getRealDistance(e_get_prox(i));
-			//sprintf(buffer, "%d, ", sensor[i]);
-			//e_send_uart1_char(buffer, strlen(buffer));
 		}
 
 		// Feed proximity sensor values to neural net
@@ -144,31 +135,9 @@ int main() {
 		old_left = left_speed;
 		old_right = right_speed;
 
-		// What is encoders in follower.c???		
-
 		// Set the motor speeds
-		//wb_differential_wheels_set_speed((int)left_speed,(int)right_speed);
 		e_set_speed_left(left_speed);
 		e_set_speed_right(right_speed);		
-		//robot_step(128); // run one step		
-
-		/*// Add the weighted sensors values
-		for (i = 0; i < 8; i++) {
-			value = (sensor[i] >> 4);
-			leftwheel += weightleft[i] * value;
-			rightwheel += weightright[i] * value;
-		}*/
-
-		//sprintf(buffer, " -> desired speed: %d %d\r\n", leftwheel, rightwheel);
-		//e_send_uart1_char(buffer, strlen(buffer));
-
-		/*// Speed bounds, to avoid setting to high speeds to the motor
-		if (leftwheel > 1000) {leftwheel = 1000;}
-		if (rightwheel > 1000) {rightwheel = 1000;}
-		if (leftwheel < -1000) {leftwheel = -1000;}
-		if (rightwheel < -1000) {rightwheel = -1000;}
-		e_set_speed_left(leftwheel);
-		e_set_speed_right(rightwheel);*/
 
 		// Indicate with leds on which side we are turning (leds are great for debugging) 
 		if (left_speed>right_speed) {
