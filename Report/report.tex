@@ -19,7 +19,7 @@
 % The following packages can be found on http:\\www.ctan.org
 \usepackage{graphicx} % for pdf, bitmapped graphics files
 %\usepackage{epsfig} % for postscript graphics files
-%\usepackage[•]{•}sepackage{mathptmx} % assumes new font selection scheme installed
+%\usepackage{mathptmx} % assumes new font selection scheme installed
 %\usepackage{times} % assumes new font selection scheme installed
 %\usepackage{amsmath} % assumes amsmath package installed
 %\usepackage{amssymb}  % assumes amsmath package installed
@@ -185,7 +185,11 @@ The obtained results could not be improved by applying a global neighbourhood wi
 To test the weights obtained, the same Braitenberg controller as the one used in Webots was implemented on the e-pucks. Then the weights that returned the best performance in the PSO were given to the controller. For the leader, a random movement coupled with obstacle avoidance was loaded onto the leader in order to test the solution on a test table without the robot getting stuck or wandering too far.
 
 \subsection{Limitations}
+The solution found has some drawbacks. Due to the nature of the neural network, the robots do not stop at a distance from the leader. Instead they move toward it until they touch it and begin to push gently. Just one follower cannot push hard enough to make the leader move, however, the sum of forces from the chain of three robots can cause the leader to slip forward, thus affecting the leader's trajectory.
 
+To correct this, a rule could be implemented with a threshold on the smallest distance seen by the sensors, causing it to stop if it is below the desired distance between robots. This was tested, but it creates an oscillating jerky movement of the followers. 
+
+A solution to decrease the oscillations would be to implement a hysteresis on the threshold, or a PID on the detected distance. The latter was tested, but the sensor values are too noisy and the integrator wound up quite a lot. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions}
